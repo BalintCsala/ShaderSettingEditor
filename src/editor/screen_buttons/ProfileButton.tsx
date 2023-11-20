@@ -1,4 +1,5 @@
 import Button from "../../Button";
+import ColoredText from "../../ColoredText";
 import { Profiles } from "../data";
 import { Lang } from "../languages";
 import { Options } from "../options";
@@ -54,7 +55,7 @@ export default function ProfileButton(props: Props) {
                 props.setCurrentProfileName(next);
                 changeTooltip();
             }}>
-            Profile: {props.lang.profile[props.currentProfileName]?.text || props.currentProfileName}
+            Profile: <ColoredText>{props.lang.profile[props.currentProfileName]?.text || props.currentProfileName}</ColoredText>
         </Button>
     );
 }
