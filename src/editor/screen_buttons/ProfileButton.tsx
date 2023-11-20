@@ -1,6 +1,6 @@
 import Button from "../../Button";
 import ColoredText from "../../ColoredText";
-import { Profiles } from "../data";
+import { Profiles } from "../properties";
 import { Lang } from "../languages";
 import { Options } from "../options";
 

@@ -3,7 +3,7 @@ import { For, Match, Show, Switch, createEffect, createSignal } from "solid-js";
 import Button from "../Button";
 import Icon from "../Icon/Icon";
 import ScreenStack from "./ScreenStack";
-import { ColorChanger, ColorOptions, Link, OptionSelector, Profiles, Screens, parseProperties } from "./data";
+import { ColorChanger, ColorOptions, Link, OptionSelector, Profiles, Screens, parseProperties } from "./properties";
 import { EMPTY_LANGS, getDefaultLanguage, parseLangFiles } from "./languages";
 import { Options, parseOptions } from "./options";
 import ColorButton from "./screen_buttons/ColorButton";
@@ -53,8 +53,8 @@ export default function ShaderEditor(props: Props) {
             }
 
             const shadersProperties = await shadersPropertiesFile.async("string");
-            const { screens, profiles, colors, sliders, special, hiddenOptions } = parseProperties(shadersProperties);
             const options = await parseOptions(zip);
+            const { screens, profiles, colors, sliders, special, hiddenOptions } = parseProperties(shadersProperties, options);
             const langs = await parseLangFiles(zip);
 
             setScreens(screens);

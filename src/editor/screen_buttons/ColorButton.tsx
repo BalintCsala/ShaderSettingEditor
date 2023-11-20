@@ -1,6 +1,6 @@
 import { Show, createSignal } from "solid-js";
 import ColorSelector from "../../components/ColorSelector";
-import { ColorChanger, ColorOption, ColorOptions } from "../data";
+import { ColorChanger, ColorOption, ColorOptions } from "../properties";
 import { Lang } from "../languages";
 import { Options, TextOption } from "../options";
 

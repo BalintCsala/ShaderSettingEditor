@@ -1,5 +1,5 @@
 import { createSignal, Show } from "solid-js";
-import { OptionSelector } from "../data";
+import { OptionSelector } from "../properties";
 import { Lang } from "../languages";
 import { Options, TextOption } from "../options";
 

@@ -5,16 +5,17 @@ export interface TextOption {
     values: string[];
     value: string;
     description: string;
+    uncertain: boolean;
 }
 
 export interface BooleanOption {
     type: "boolean";
     description: string;
     value: boolean;
+    uncertain: boolean;
 }
 
 export type Option = TextOption | BooleanOption;
-
 export type Options = { [key: string]: Option };
 
 const RECOGNIZED_CONST_VARIABLES = [
@@ -69,13 +70,15 @@ function parseOption(line: string): { name: string; option: Option } | null {
             name,
             option: {
                 type: "boolean",
-                description: details,
+                description: details ?? "",
                 value: false,
+                uncertain: !details,
             },
         };
     }
 
     const [head, details] = line.split(/\/\//).map(part => part.trim());
+    if (head.includes("(")) return null;
 
     if (line.startsWith("const")) {
         // Const option
@@ -91,6 +94,7 @@ function parseOption(line: string): { name: string; option: Option } | null {
                     description: details ?? "",
                     values: [value],
                     value,
+                    uncertain: !details,
                 },
             };
         }
@@ -103,6 +107,7 @@ function parseOption(line: string): { name: string; option: Option } | null {
                 description,
                 values: valuesRaw.split(/\s+/g),
                 value,
+                uncertain: false,
             },
         };
     }
@@ -114,14 +119,16 @@ function parseOption(line: string): { name: string; option: Option } | null {
             name,
             option: {
                 type: "boolean",
-                description: details,
+                description: details ?? "",
                 value: true,
+                uncertain: !details,
             },
         };
     }
 
     if (!details) {
         // I dub thee the Sasha setting
+
         return {
             name,
             option: {
@@ -129,6 +136,7 @@ function parseOption(line: string): { name: string; option: Option } | null {
                 description: "",
                 values: [value],
                 value,
+                uncertain: true,
             },
         };
     }
@@ -142,6 +150,7 @@ function parseOption(line: string): { name: string; option: Option } | null {
                 description: details,
                 values: [value],
                 value,
+                uncertain: false,
             },
         };
     }
@@ -154,6 +163,7 @@ function parseOption(line: string): { name: string; option: Option } | null {
             description,
             values: valuesRaw.split(/\s+/g),
             value,
+            uncertain: false,
         },
     };
 }
@@ -162,12 +172,20 @@ export async function parseOptions(zip: JSZip) {
     const files = Object.entries(zip.files);
 
     const options: Options = {};
+    const compileTimeCheckLines: string[] = [];
     await Promise.all(
         files.map(async ([, file]) => {
             const content = await file.async("text");
             content.split("\n").forEach(line => {
-                if (!line.includes("#define") && !line.includes("const")) return;
                 line = line.trim();
+
+                if (line.includes("#if")) {
+                    compileTimeCheckLines.push(line);
+                    return;
+                }
+
+                if (!line.startsWith("#define") && !line.match(/^\/\/\s*#define/) && !line.startsWith("const")) return;
+
                 const parsed = parseOption(line);
                 if (parsed === null) {
                     return;
@@ -177,6 +195,15 @@ export async function parseOptions(zip: JSZip) {
             });
         }),
     );
+
+    Object.entries(options).forEach(([name, option]) => {
+        if (!option.uncertain) return;
+        const found = compileTimeCheckLines.findIndex(line => line.includes(" " + name) || line.includes("(" + name)) !== -1;
+        if (found) {
+            return;
+        }
+        delete options[name];
+    });
 
     return options;
 }

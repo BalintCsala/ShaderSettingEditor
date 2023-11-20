@@ -1,3 +1,5 @@
+import { Options } from "./options";
+
 export interface Link {
     type: "link";
     name: string;
@@ -6,7 +8,6 @@ export interface Link {
 export interface OptionSelector {
     type: "option";
     name: string;
-    slider: boolean;
 }
 
 export interface ColorChanger {
@@ -100,13 +101,12 @@ function parseScreenElements(list: string) {
                 return {
                     type: "option" as const,
                     name: element,
-                    slider: false,
                 };
             }
         });
 }
 
-export function parseProperties(propertiesFile: string) {
+export function parseProperties(propertiesFile: string, parsedOptions: Options) {
     const screens: Screens = {};
     const profiles: { [key: string]: (Setting | CopyProfile)[] } = {};
     const colors: ColorOptions = {};
@@ -135,6 +135,18 @@ export function parseProperties(propertiesFile: string) {
                         screens[name] = {
                             ...(screens[name] ?? { children: [] }),
                             columns: parseInt(right),
+                        };
+                        break;
+                    }
+                    if (right === "*") {
+                        screens[name] = {
+                            columns: 3,
+                            children: Object.keys(parsedOptions).map(name => {
+                                return {
+                                    type: "option",
+                                    name,
+                                };
+                            }),
                         };
                         break;
                     }

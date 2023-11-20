@@ -1,7 +1,7 @@
 import Button from "../../Button";
 import ColoredText from "../../ColoredText";
 import Icon from "../../Icon/Icon";
-import { Link, Screens } from "../data";
+import { Link, Screens } from "../properties";
 import { Lang } from "../languages";
 
 interface Props {

@@ -1,6 +1,6 @@
 import { Show, Switch, Match } from "solid-js";
 import Button from "../../Button";
-import { OptionSelector } from "../data";
+import { OptionSelector } from "../properties";
 import { Options } from "../options";
 import { Lang } from "../languages";
 import ColoredText from "../../ColoredText";
