@@ -76,7 +76,7 @@ body[data-special="vector"] header > span::before {
 /* Shrimple */
 
 body[data-special="shrimple"] {
-    background: url("background1.png");
+    background: url("/background1.png");
     background-size: cover;
     background-position: right;
 }
