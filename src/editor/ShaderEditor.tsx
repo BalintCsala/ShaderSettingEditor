@@ -3,7 +3,7 @@ import { For, Match, Show, Switch, createEffect, createSignal } from "solid-js";
 import Button from "../Button";
 import Icon from "../Icon/Icon";
 import ScreenStack from "./ScreenStack";
-import { ColorChanger, Colors, Link, OptionSelector, Profiles, Screens, parseProperties } from "./data";
+import { ColorChanger, ColorOptions, Link, OptionSelector, Profiles, Screens, parseProperties } from "./data";
 import { EMPTY_LANGS, getDefaultLanguage, parseLangFiles } from "./languages";
 import { Options, parseOptions } from "./options";
 import ColorButton from "./screen_buttons/ColorButton";
@@ -24,7 +24,7 @@ export default function ShaderEditor(props: Props) {
 
     const [screens, setScreens] = createSignal<Screens>({});
     const [profiles, setProfiles] = createSignal<Profiles>({});
-    const [colors, setColors] = createSignal<Colors>({});
+    const [colors, setColors] = createSignal<ColorOptions>({});
     const [options, setOptions] = createSignal<Options>({});
     const [sliders, setSliders] = createSignal<string[]>([]);
     const [langs, setLangs] = createSignal(EMPTY_LANGS);

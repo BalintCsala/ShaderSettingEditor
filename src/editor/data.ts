@@ -52,18 +52,18 @@ export type Screens = { [key: string]: Screen };
 
 export type Profiles = { [key: string]: Setting[] };
 
-export interface Color {
+export interface ColorOption {
     red: string;
     blue: string;
     green: string;
 }
 
-export type Colors = { [key: string]: Color };
+export type ColorOptions = { [key: string]: ColorOption };
 
 export interface Properties {
     screens: Screens;
     profiles: Profiles;
-    colors: Colors;
+    colors: ColorOptions;
     sliders: string[];
     special: string;
     hiddenOptions: { [key: string]: string };
@@ -109,7 +109,7 @@ function parseScreenElements(list: string) {
 export function parseProperties(propertiesFile: string) {
     const screens: Screens = {};
     const profiles: { [key: string]: (Setting | CopyProfile)[] } = {};
-    const colors: Colors = {};
+    const colors: ColorOptions = {};
     const colorReplaceMap = new Map<string, string | null>();
     let sliders: string[] = [];
     let special = "";
