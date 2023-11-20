@@ -299,6 +299,18 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
         screen.children.splice(index, 0, ...parseScreenElements(options));
     });
 
+    if (Object.keys(screens).length === 0) {
+        screens.main = {
+            columns: 3,
+            children: Object.keys(parsedOptions).map(name => {
+                return {
+                    type: "option",
+                    name,
+                };
+            }),
+        };
+    }
+
     return {
         screens,
         profiles: profiles as Profiles,
