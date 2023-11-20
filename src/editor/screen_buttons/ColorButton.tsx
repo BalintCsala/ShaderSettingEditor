@@ -61,7 +61,7 @@ export default function ColorButton(props: Props) {
                     }}
                 />
             </Show>
-            <span class="text-shadow pointer-events-none z-10 select-none text-black shadow-red-600 drop-shadow-lg">
+            <span class="text-shadow pointer-events-none select-none text-black shadow-red-600 drop-shadow-lg">
                 {props.lang.option[props.colorChanger.name]?.text || props.colorChanger.name}
             </span>
         </button>
