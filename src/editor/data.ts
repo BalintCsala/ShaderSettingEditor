@@ -77,6 +77,35 @@ function flattenSettings(settings: (Setting | CopyProfile)[], profiles: { [key: 
     }, [] as Setting[]);
 }
 
+function parseScreenElements(list: string) {
+    return list
+        .trim()
+        .split(/\s+/g)
+        .map(element => {
+            if (element === "<empty>") {
+                return { type: "empty" as const };
+            } else if (element === "<profile>") {
+                return { type: "profile" as const };
+            } else if (element.startsWith("[")) {
+                return {
+                    type: "link" as const,
+                    name: element.replace(/\[|\]/g, ""),
+                };
+            } else if (element.startsWith("(")) {
+                return {
+                    type: "color" as const,
+                    name: element.replace(/\(|\)/g, ""),
+                };
+            } else {
+                return {
+                    type: "option" as const,
+                    name: element,
+                    slider: false,
+                };
+            }
+        });
+}
+
 export function parseProperties(propertiesFile: string) {
     const screens: Screens = {};
     const profiles: { [key: string]: (Setting | CopyProfile)[] } = {};
@@ -85,6 +114,7 @@ export function parseProperties(propertiesFile: string) {
     let sliders: string[] = [];
     let special = "";
     const hiddenOptions: { [key: string]: string } = {};
+    const appends: { screenName: string; index: number; options: string }[] = [];
 
     const removeEmptyAfter: { [key: string]: string[] } = {};
     const removeEmptyBefore: { [key: string]: string[] } = {};
@@ -108,27 +138,7 @@ export function parseProperties(propertiesFile: string) {
                         };
                         break;
                     }
-                    const children = right
-                        .trim()
-                        .split(/\s+/g)
-                        .map(element => {
-                            if (element === "<empty>") {
-                                return { type: "empty" as const };
-                            } else if (element === "<profile>") {
-                                return { type: "profile" as const };
-                            } else if (element.startsWith("[")) {
-                                return {
-                                    type: "link" as const,
-                                    name: element.replace(/\[|\]/g, ""),
-                                };
-                            } else {
-                                return {
-                                    type: "option" as const,
-                                    name: element,
-                                    slider: false,
-                                };
-                            }
-                        });
+                    const children = parseScreenElements(right);
                     screens[name] = {
                         ...(screens[name] ?? { columns: 2 }),
                         children,
@@ -199,6 +209,16 @@ export function parseProperties(propertiesFile: string) {
                             removeEmptyBefore[screenName] = [...(removeEmptyBefore[screenName] ?? []), ...options];
                             break;
                         }
+                        case "append": {
+                            const screenName = path[2];
+                            const index = parseInt(path[3]);
+                            appends.push({
+                                screenName,
+                                index,
+                                options: right,
+                            });
+                            break;
+                        }
                         case "special": {
                             special = right.trim();
                             break;
@@ -261,6 +281,11 @@ export function parseProperties(propertiesFile: string) {
     for (const profile in profiles) {
         profiles[profile] = flattenSettings(profiles[profile], profiles);
     }
+
+    appends.forEach(({ screenName, index, options }) => {
+        const screen = screens[screenName];
+        screen.children.splice(index, 0, ...parseScreenElements(options));
+    });
 
     return {
         screens,

@@ -61,6 +61,23 @@ extra.hidden.COLOR_MUL = 1.0
 
 For boolean options use true and false.
 
+### Appending options into screens
+
+This setting lets you insert settings in the middle of screens if you want something to show up you wouldn't show on the regular optifine editor (E.g. color selectors).
+
+```
+extra.append.<Screen name>.<Index to append to> = <List of options to append>
+
+# Example:
+extra.append.MY_SCREEN.2 = OPTION <empty>
+```
+
+The append point is 0-indexed. If you want to append colors, they have to be surrounded with parentheses:
+
+```
+extra.append.COLORS.2 = (SKY_COLOR)
+```
+
 ### Dynamically disabled options
 
 > This setting is currently non-functional and only here for future reference.
