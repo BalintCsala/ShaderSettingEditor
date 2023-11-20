@@ -11,12 +11,13 @@ import LinkButton from "./screen_buttons/LinkButton";
 import { OptionButton } from "./screen_buttons/OptionButton";
 import ProfileButton from "./screen_buttons/ProfileButton";
 import SliderOption from "./screen_buttons/SliderOption";
+import { exportOptions } from "./export";
 
 interface Props {
     file: File;
 }
 
-const DEFAULT_TOOLTIP = "This page is intentionally left blank";
+const DEFAULT_TOOLTIP = "";
 
 export default function ShaderEditor(props: Props) {
     const [zip, setZip] = createSignal<JSZip | null>(null);
@@ -29,6 +30,7 @@ export default function ShaderEditor(props: Props) {
     const [langs, setLangs] = createSignal(EMPTY_LANGS);
     const [currentLangName, setCurrentLangName] = createSignal("en_us");
     const [tooltip, setTooltip] = createSignal(DEFAULT_TOOLTIP);
+    const [hiddenOptions, setHiddenOptions] = createSignal<{ [key: string]: string }>({});
     const resetTooltip = () => setTooltip(DEFAULT_TOOLTIP);
 
     const [screenStack, setScreenStack] = createSignal(["main"]);
@@ -51,22 +53,36 @@ export default function ShaderEditor(props: Props) {
             }
 
             const shadersProperties = await shadersPropertiesFile.async("string");
-            const { screens, profiles, colors, sliders, special } = parseProperties(shadersProperties);
+            const { screens, profiles, colors, sliders, special, hiddenOptions } = parseProperties(shadersProperties);
             const options = await parseOptions(zip);
             const langs = await parseLangFiles(zip);
 
             setScreens(screens);
             setProfiles(profiles);
-            setOptions(options);
             setLangs(langs);
             setColors(colors);
             setSliders(sliders);
             setCurrentLangName(getDefaultLanguage(langs));
+            setHiddenOptions(hiddenOptions);
+
+            Object.entries(hiddenOptions).forEach(([name, value]) => {
+                const option = options[name];
+                switch (option.type) {
+                    case "boolean": {
+                        option.value = value === "true";
+                        break;
+                    }
+                    case "text": {
+                        option.value = value;
+                        break;
+                    }
+                }
+            });
+            setOptions(options);
 
             setZip(zip);
             setScreenStack(["main"]);
 
-            document.querySelector(".special")!.className = "special " + special;
             document.body.dataset.special = special;
         });
     });
@@ -74,10 +90,10 @@ export default function ShaderEditor(props: Props) {
     return (
         <Show when={zip()} fallback={<span class="text-emerald-600">Loading file...</span>}>
             <ScreenStack lang={currentLang()} screenStack={screenStack()} setScreenStack={setScreenStack} />
-            <div class="flex flex-row flex-wrap">
+            <div class="grid gap-2 p-2" style={{ "grid-template-columns": `repeat(${currentScreen().columns}, 1fr)` }}>
                 <For each={currentScreen().children}>
                     {element => (
-                        <div class="w-1/2 p-2">
+                        <div>
                             <Switch>
                                 <Match when={element.type === "empty"}>
                                     <span class="select-none">&nbsp;</span>
@@ -90,6 +106,7 @@ export default function ShaderEditor(props: Props) {
                                         setScreenStack={setScreenStack}
                                         setTooltip={setTooltip}
                                         resetTooltip={resetTooltip}
+                                        screens={screens()}
                                     />
                                 </Match>
                                 <Match when={element.type === "profile"}>
@@ -99,6 +116,10 @@ export default function ShaderEditor(props: Props) {
                                         profiles={profiles()}
                                         setCurrentProfileName={setCurrentProfileName}
                                         setOptions={setOptionsAndResetProfile}
+                                        lang={currentLang()}
+                                        setTooltip={setTooltip}
+                                        resetTooltip={resetTooltip}
+                                        hiddenOptions={hiddenOptions()}
                                     />
                                 </Match>
                                 <Match when={element.type === "option"}>
@@ -140,16 +161,24 @@ export default function ShaderEditor(props: Props) {
                     )}
                 </For>
             </div>
-            <div class="m-2 grow border-2 border-emerald-600 p-2 text-lg text-emerald-600">{tooltip()}</div>
+            <div class="m-2 mb-0 grow border-2 border-emerald-600 p-2 text-lg text-emerald-600">
+                <For each={tooltip().split(/(?<=\.)\s/g)}>{part => <p>{part}</p>}</For>
+            </div>
             <div class="flex justify-between p-2">
-                <Button
-                    onClick={() => {
-                        const languages = Object.keys(langs());
-                        setCurrentLangName(languages[(languages.indexOf(currentLangName()) + 1) % languages.length]);
-                    }}>
-                    <Icon icon="language" />
-                    {currentLangName().toUpperCase()}
-                </Button>
+                <div>
+                    <Button
+                        onClick={() => {
+                            const languages = Object.keys(langs());
+                            setCurrentLangName(languages[(languages.indexOf(currentLangName()) + 1) % languages.length]);
+                        }}>
+                        <Icon icon="language" />
+                        {currentLangName().toUpperCase()}
+                    </Button>
+                    <Button class="ml-4" onClick={() => exportOptions(options(), props.file.name)}>
+                        <Icon icon="download" />
+                        Export settings
+                    </Button>
+                </div>
                 <Show when={screenStack().length > 1}>
                     <Button onClick={() => setScreenStack(screenStack().slice(0, -1))}>
                         <Icon icon="arrow_back" />

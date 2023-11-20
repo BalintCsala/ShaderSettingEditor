@@ -25,7 +25,45 @@ option.SKY_COLOR.comment = The color of the sky.
 
 `value`-s are not supported.
 
+### Removing empty spaces
+
+If you added empty spaces after colors to make the options screen neater, you can ask the setting manager to remove them after or before a specific option.
+
+```
+extra.removeEmptyBefore.<Screen name> = <Option name(s)>
+extra.removeEmptyAfter.<Screen name> = <Option name(s)>
+```
+
+Example: If your screen layout looked like this:
+
+```
+screen.SKY = SKY_COLOR_R SKY_COLOR_G SKY_COLOR_B <empty> SUN_COLOR_R SUN_COLOR_G SUN_COLOR_B <empty> ...
+```
+
+You can specify the empty to be removed like so:
+
+```
+extra.removeEmptyAfter.SKY = SKY_COLOR_B SUN_COLOR_B
+```
+
+The options are removed before converting them to color selectors.
+
+### Hidden options
+
+This is for the sake of backwards compatibility. If an option is redundant with the extra settings, you can lock it to a constant value and hide it.
+
+```
+extra.hidden.<Option to lock and hide> = <Value to set the option to>
+
+# Example:
+extra.hidden.COLOR_MUL = 1.0
+```
+
+For boolean options use true and false.
+
 ### Dynamically disabled options
+
+> This setting is currently non-functional and only here for future reference.
 
 This option lets you disable or enable settings based on the value of other boolean settings.
 
@@ -57,12 +95,12 @@ A new `disabled` setting can be specified for options, this will show up as a to
 option.RT_STEPS.disabled = This settings needs the ray tracing type to be SSR and raytracing to be enabled.
 ```
 
-### Special
+### Fcrpvny
 
-Adds special flare to the website.
+Nqqf fcrpvny syner gb gur jrofvgr.
 
 ```
-extra.special = <Value>
+rkgen.fcrpvny = <Inyhr>
 ```
 
-Contact me for possible values.
+Pbagnpg zr sbe cbffvoyr inyhrf.

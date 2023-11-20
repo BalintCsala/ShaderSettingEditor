@@ -19,9 +19,9 @@ export function OptionButton(props: Props) {
     return (
         <Button
             onMouseEnter={() => {
-                const tooltip = props.lang.option[props.selector.name]?.description;
-                console.log(tooltip);
-
+                const langOption = props.lang.option[props.selector.name];
+                if (!langOption) return;
+                const tooltip = langOption.description ?? "";
                 if (tooltip) props.setTooltip(tooltip);
             }}
             onMouseLeave={() => props.resetTooltip()}
@@ -59,7 +59,8 @@ export function OptionButton(props: Props) {
             <Show when={option()} fallback={<span>Unknown option: {props.selector.name}</span>}>
                 {option => (
                     <span>
-                        {props.lang.option[props.selector.name]?.text || props.selector.name}:{" "}
+                        <ColoredText>{props.lang.option[props.selector.name]?.text || props.selector.name}</ColoredText>
+                        <span>: </span>
                         <Switch>
                             <Match when={option().type === "boolean"}>{option().value ? "Enabled" : "Disabled"}</Match>
                             <Match when={option().type === "text"}>

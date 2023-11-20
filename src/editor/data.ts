@@ -25,6 +25,7 @@ export interface Empty {
 export type ScreenElement = Link | OptionSelector | Profile | Empty | ColorChanger;
 
 export interface Screen {
+    columns: number;
     children: ScreenElement[];
 }
 
@@ -40,10 +41,9 @@ export interface BooleanSetting {
     value: boolean;
 }
 
-export interface Color {
-    red: string;
-    blue: string;
-    green: string;
+export interface CopyProfile {
+    type: "copyProfile";
+    name: string;
 }
 
 export type Setting = TextSetting | BooleanSetting;
@@ -51,6 +51,12 @@ export type Setting = TextSetting | BooleanSetting;
 export type Screens = { [key: string]: Screen };
 
 export type Profiles = { [key: string]: Setting[] };
+
+export interface Color {
+    red: string;
+    blue: string;
+    green: string;
+}
 
 export type Colors = { [key: string]: Color };
 
@@ -60,17 +66,30 @@ export interface Properties {
     colors: Colors;
     sliders: string[];
     special: string;
+    hiddenOptions: { [key: string]: string };
+}
+
+function flattenSettings(settings: (Setting | CopyProfile)[], profiles: { [key: string]: (Setting | CopyProfile)[] }): Setting[] {
+    return settings.reduce((settings, next) => {
+        if (next.type !== "copyProfile") return [...settings, next];
+
+        return [...settings, ...flattenSettings(profiles[next.name], profiles)];
+    }, [] as Setting[]);
 }
 
 export function parseProperties(propertiesFile: string) {
     const screens: Screens = {};
-    const profiles: Profiles = {};
+    const profiles: { [key: string]: (Setting | CopyProfile)[] } = {};
     const colors: Colors = {};
     const colorReplaceMap = new Map<string, string | null>();
     let sliders: string[] = [];
     let special = "";
+    const hiddenOptions: { [key: string]: string } = {};
 
-    propertiesFile = propertiesFile.replace(/\\\r?\n\r?\n?/g, " ");
+    const removeEmptyAfter: { [key: string]: string[] } = {};
+    const removeEmptyBefore: { [key: string]: string[] } = {};
+
+    propertiesFile = propertiesFile.replace(/\\\r?\n/g, " ");
 
     propertiesFile
         .split("\n")
@@ -82,6 +101,13 @@ export function parseProperties(propertiesFile: string) {
             switch (path[0]) {
                 case "screen": {
                     const name = path[1] ?? "main";
+                    if (path[2] === "columns") {
+                        screens[name] = {
+                            ...(screens[name] ?? { children: [] }),
+                            columns: parseInt(right),
+                        };
+                        break;
+                    }
                     const children = right
                         .trim()
                         .split(/\s+/g)
@@ -104,6 +130,7 @@ export function parseProperties(propertiesFile: string) {
                             }
                         });
                     screens[name] = {
+                        ...(screens[name] ?? { columns: 2 }),
                         children,
                     };
 
@@ -116,6 +143,13 @@ export function parseProperties(propertiesFile: string) {
                         .trim()
                         .split(/\s+/g)
                         .map(element => {
+                            if (element.startsWith("profile")) {
+                                const name = element.replace("profile.", "");
+                                return {
+                                    type: "copyProfile" as const,
+                                    name,
+                                };
+                            }
                             if (element.indexOf(":") !== -1) {
                                 const [name, value] = element.split(":");
                                 return {
@@ -148,6 +182,23 @@ export function parseProperties(propertiesFile: string) {
                             colorReplaceMap.set(blue, null);
                             break;
                         }
+                        case "hidden": {
+                            const name = path[2];
+                            hiddenOptions[name] = right;
+                            break;
+                        }
+                        case "removeEmptyAfter": {
+                            const screenName = path[2];
+                            const options = right.split(/\s+/g);
+                            removeEmptyAfter[screenName] = [...(removeEmptyAfter[screenName] ?? []), ...options];
+                            break;
+                        }
+                        case "removeEmptyBefore": {
+                            const screenName = path[2];
+                            const options = right.split(/\s+/g);
+                            removeEmptyBefore[screenName] = [...(removeEmptyBefore[screenName] ?? []), ...options];
+                            break;
+                        }
                         case "special": {
                             special = right.trim();
                             break;
@@ -158,11 +209,39 @@ export function parseProperties(propertiesFile: string) {
             }
         });
 
-    for (const key in screens) {
-        const screen = screens[key];
+    Object.entries(removeEmptyAfter).forEach(([screenName, options]) => {
+        const screen = screens[screenName];
+
+        for (let i = screen.children.length - 1; i > 0; i--) {
+            const prev = screen.children[i - 1];
+            if (screen.children[i].type !== "empty" || prev.type !== "option") continue;
+
+            if (options.includes(prev.name)) {
+                screen.children.splice(i, 1);
+            }
+        }
+    });
+
+    Object.entries(removeEmptyBefore).forEach(([screenName, options]) => {
+        const screen = screens[screenName];
+        for (let i = screen.children.length - 2; i >= 0; i--) {
+            const next = screen.children[i + 1];
+            if (screen.children[i].type !== "empty" || next.type !== "option") continue;
+
+            if (options.includes(next.name)) {
+                screen.children.splice(i, 1);
+            }
+        }
+    });
+
+    Object.values(screens).forEach(screen => {
         screen.children = screen.children
             .map(child => {
-                if (child.type !== "option" || !colorReplaceMap.has(child.name)) return child;
+                if (child.type !== "option") return child;
+
+                if (child.name in hiddenOptions) return null;
+
+                if (!colorReplaceMap.has(child.name)) return child;
 
                 const replaceBy = colorReplaceMap.get(child.name)!;
                 if (replaceBy === null) return replaceBy;
@@ -177,13 +256,18 @@ export function parseProperties(propertiesFile: string) {
                 return null;
             })
             .filter(child => child !== null) as ScreenElement[];
+    });
+
+    for (const profile in profiles) {
+        profiles[profile] = flattenSettings(profiles[profile], profiles);
     }
 
     return {
         screens,
-        profiles,
+        profiles: profiles as Profiles,
         colors,
         sliders,
         special,
+        hiddenOptions,
     };
 }

@@ -17,13 +17,146 @@ export type Option = TextOption | BooleanOption;
 
 export type Options = { [key: string]: Option };
 
-const booleanOptionOff = /\/\/\s*#define\s*(\w+)(?:\s*\/\/\s*(.+))?$/;
-const booleanOptionOn = /^\s*#define\s*(\w+)(?:\s*\/\/\s*(.+))?$/;
-const textOption = /^#define\s*(\S+)\s*(\S+)\s*\/\/\s*(.+)\[([^[]+)]/;
+const RECOGNIZED_CONST_VARIABLES = [
+    "shadowMapResolution",
+    "shadowDistance",
+    "shadowDistanceRenderMul",
+    "shadowIntervalSize",
+    "generateShadowMipmap",
+    "generateShadowColorMipmap",
+    "shadowHardwareFiltering",
+    "shadowHardwareFiltering0",
+    "shadowHardwareFiltering1",
+    "shadowtex0Mipmap",
+    "shadowtexMipmap",
+    "shadowtex1Mipmap",
+    "shadowcolor0Mipmap",
+    "shadowColor0Mipmap",
+    "shadowcolor1Mipmap",
+    "shadowColor1Mipmap",
+    "shadowtex0Nearest",
+    "shadowtexNearest",
+    "shadow0MinMagNearest",
+    "shadowtex1Nearest",
+    "shadow1MinMagNearest",
+    "shadowcolor0Nearest",
+    "shadowColor0Nearest",
+    "shadowColor0MinMagNearest",
+    "shadowcolor1Nearest",
+    "shadowColor1Nearest",
+    "shadowColor1MinMagNearest",
+    "wetnessHalflife",
+    "drynessHalflife",
+    "eyeBrightnessHalflife",
+    "centerDepthHalflife",
+    "sunPathRotation",
+    "ambientOcclusionLevel",
+    "superSamplingLevel",
+    "noiseTextureResolution",
+];
 
-const booleanOptionOffConst = /^const\s*\S+\s*(\S+)\s*=\s*false;(?:\s*\/\/\s*([^[]+))?$/;
-const booleanOptionOnConst = /^const\s*\S+\s*(\S+)\s*=\s*true;(?:\s*\/\/\s*([^[]+))?$/;
-const textOptionConst = /^const\s*\S+\s*(\S+)\s*=\s*([^;]+);\s*\/\/\s*([^[]+)\[(.+)\]/;
+function parseOption(line: string): { name: string; option: Option } | null {
+    if (line.startsWith("//")) {
+        // Boolean option, default off
+        const [head, details] = line
+            .substring(2)
+            .trim()
+            .split(/\/\//)
+            .map(part => part.trim());
+        const [, name] = head.replace("//", "").trim().split(/\s+/g);
+
+        return {
+            name,
+            option: {
+                type: "boolean",
+                description: details,
+                value: false,
+            },
+        };
+    }
+
+    const [head, details] = line.split(/\/\//).map(part => part.trim());
+
+    if (line.startsWith("const")) {
+        // Const option
+        const [, , name, , value] = head.replace(";", "").split(/\s+/g);
+        if (!RECOGNIZED_CONST_VARIABLES.includes(name)) return null;
+
+        if (!details || !details.includes("[")) {
+            // Values are optional
+            return {
+                name,
+                option: {
+                    type: "text",
+                    description: details ?? "",
+                    values: [value],
+                    value,
+                },
+            };
+        }
+
+        const [description, valuesRaw] = details.replace("]", "").split("[");
+        return {
+            name,
+            option: {
+                type: "text",
+                description,
+                values: valuesRaw.split(/\s+/g),
+                value,
+            },
+        };
+    }
+
+    const [, name, value] = head.split(/\s+/g);
+    if (!value) {
+        // Boolean option, default on
+        return {
+            name,
+            option: {
+                type: "boolean",
+                description: details,
+                value: true,
+            },
+        };
+    }
+
+    if (!details) {
+        // I dub thee the Sasha setting
+        return {
+            name,
+            option: {
+                type: "text",
+                description: "",
+                values: [value],
+                value,
+            },
+        };
+    }
+
+    if (!details.includes("[")) {
+        // Values are optional
+        return {
+            name,
+            option: {
+                type: "text",
+                description: details,
+                values: [value],
+                value,
+            },
+        };
+    }
+
+    const [description, valuesRaw] = details.replace("]", "").split("[");
+    return {
+        name,
+        option: {
+            type: "text",
+            description,
+            values: valuesRaw.split(/\s+/g),
+            value,
+        },
+    };
+}
 
 export async function parseOptions(zip: JSZip) {
     const files = Object.entries(zip.files);
@@ -33,40 +166,14 @@ export async function parseOptions(zip: JSZip) {
         files.map(async ([, file]) => {
             const content = await file.async("text");
             content.split("\n").forEach(line => {
+                if (!line.includes("#define") && !line.includes("const")) return;
                 line = line.trim();
-                let match: RegExpMatchArray | null = line.match(booleanOptionOff) ?? line.match(booleanOptionOffConst);
-                if (match) {
-                    const [, name, description] = match;
-                    options[name] = {
-                        type: "boolean",
-                        value: false,
-                        description: description ?? "",
-                    };
+                const parsed = parseOption(line);
+                if (parsed === null) {
                     return;
                 }
-
-                match = line.match(booleanOptionOn) ?? line.match(booleanOptionOnConst);
-                if (match) {
-                    const [, name, description] = match;
-                    options[name] = {
-                        type: "boolean",
-                        value: true,
-                        description: description ?? "",
-                    };
-                    return;
-                }
-
-                match = line.match(textOption) ?? line.match(textOptionConst);
-                if (match) {
-                    const [, name, defaultValue, description, values] = match;
-                    options[name] = {
-                        type: "text",
-                        value: defaultValue,
-                        values: values.split(" "),
-                        description: description,
-                    };
-                    return;
-                }
+                const { name, option } = parsed;
+                options[name] = option;
             });
         }),
     );

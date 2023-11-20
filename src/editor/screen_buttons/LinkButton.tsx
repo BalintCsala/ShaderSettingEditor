@@ -1,11 +1,12 @@
 import Button from "../../Button";
 import ColoredText from "../../ColoredText";
 import Icon from "../../Icon/Icon";
-import { Link } from "../data";
+import { Link, Screens } from "../data";
 import { Lang } from "../languages";
 
 interface Props {
     screenStack: string[];
+    screens: Screens;
     setScreenStack: (stack: string[]) => void;
     link: Link;
     lang: Lang;
@@ -23,7 +24,9 @@ export default function LinkButton(props: Props) {
             onMouseLeave={() => props.resetTooltip()}
             onBlur={() => props.resetTooltip()}
             class="w-full"
-            onClick={() => props.setScreenStack([...props.screenStack, props.link.name])}>
+            onClick={() => {
+                if (props.link.name in props.screens) props.setScreenStack([...props.screenStack, props.link.name]);
+            }}>
             <ColoredText>{props.lang.screen[props.link.name]?.text || props.link.name}</ColoredText>
             <Icon icon="arrow_forward" />
         </Button>

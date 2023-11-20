@@ -11,7 +11,7 @@ export default function App() {
     return (
         <div class="flex h-screen w-screen max-w-6xl flex-col items-center p-4 text-4xl">
             <header class="relative mb-4 w-full text-center">
-                <span class="text-emerald-600">Editor</span>
+                <span class="text-emerald-600">Extra shader editor</span>
                 <AboutButton />
             </header>
             <main class="relative flex w-full grow flex-col border-2 border-emerald-600">
@@ -30,6 +30,7 @@ export default function App() {
                     }>
                     {file => <ShaderEditor file={file()} />}
                 </Show>
+                <div class="overlay hidden" />
             </main>
         </div>
     );

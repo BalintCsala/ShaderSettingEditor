@@ -1,5 +1,6 @@
 import Button from "../../Button";
 import { Profiles } from "../data";
+import { Lang } from "../languages";
 import { Options } from "../options";
 
 interface Props {
@@ -9,6 +10,9 @@ interface Props {
     options: Options;
     lang: Lang;
     setOptions: (options: Options) => void;
+    setTooltip: (tooltip: string) => void;
+    resetTooltip: () => void;
+    hiddenOptions: { [key: string]: string };
 }
 
 export default function ProfileButton(props: Props) {
@@ -19,14 +23,17 @@ export default function ProfileButton(props: Props) {
         return names[(currIndex + 1) % names.length];
     };
 
+    const changeTooltip = () => {
+        const tooltip = (props.lang.profileDescription ?? "") + (props.lang.profile[props.currentProfileName]?.description ?? "");
+        if (tooltip) {
+            props.setTooltip(tooltip);
+        } else {
+            props.resetTooltip();
+        }
+    };
     return (
         <Button
-            onMouseEnter={() => {
-                const tooltip = props.lang.option[props.selector.name]?.description;
-                console.log(tooltip);
-
-                if (tooltip) props.setTooltip(tooltip);
-            }}
+            onMouseEnter={changeTooltip}
             onMouseLeave={() => props.resetTooltip()}
             onBlur={() => props.resetTooltip()}
             class="w-full"
@@ -35,6 +42,7 @@ export default function ProfileButton(props: Props) {
                 const profileSettings = props.profiles[next];
                 const optionsCopy = { ...props.options };
                 profileSettings.forEach(setting => {
+                    if (setting.name in props.hiddenOptions) return;
                     if (!(setting.name in optionsCopy)) {
                         console.warn(`Error while applying profile. ${setting.name} is not a setting`);
                         return;
@@ -44,8 +52,9 @@ export default function ProfileButton(props: Props) {
 
                 props.setOptions(optionsCopy);
                 props.setCurrentProfileName(next);
+                changeTooltip();
             }}>
-            Profile: {props.currentProfileName}
+            Profile: {props.lang.profile[props.currentProfileName]?.text || props.currentProfileName}
         </Button>
     );
 }
