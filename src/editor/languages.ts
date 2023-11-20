@@ -69,7 +69,7 @@ export async function parseLangFiles(zip: JSZip) {
         Object.entries(zip.files)
             .filter(([name]) => name.endsWith(".lang"))
             .map(async ([name, file]) => {
-                const pathParts = name.split("/");
+                const pathParts = name.split(/\\|\//g);
                 const language = pathParts[pathParts.length - 1].replace(".lang", "");
                 const lang: Lang = {
                     screen: {},
