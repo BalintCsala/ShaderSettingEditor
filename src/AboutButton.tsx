@@ -31,8 +31,8 @@ export default function AboutButton() {
                             </p>
                             <p class="my-4 text-emerald-600">
                                 If you find a bug in the website, report it on my <Link url="#">github page</Link>. If the issue you noticed is related to the
-                                generated setting file or shader, make sure it's related to this site. A good (but still imperfect) rule of thumb is if you the
-                                unedited shader gets loaded into the game successfully, but the edited one doesn't.
+                                generated setting file or shader, make sure it's actually coming from this site. A good (but still imperfect) rule of thumb is
+                                if the unedited shader gets loaded into the game successfully, but the edited one doesn't.
                             </p>
                             <p class="mt-4 text-emerald-600">Contacts:</p>
                             <ul class="list-dashed">
