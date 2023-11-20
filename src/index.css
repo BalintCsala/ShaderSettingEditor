@@ -61,16 +61,19 @@ body[data-special="vector"] main {
 
 body[data-special="vector"] header > span {
     color: transparent;
+    user-select: none;
 }
 
 body[data-special="vector"] header > span::before {
     content: "Vector";
     display: block;
     width: 100%;
+    pointer-events: none;
     text-align: center;
     @apply text-emerald-600;
     position: absolute;
     z-index: 10;
+    user-select: none;
 }
 
 /* Shrimple */
@@ -87,14 +90,17 @@ body[data-special="shrimple"] main {
 
 body[data-special="shrimple"] header > span {
     color: transparent;
+    user-select: none;
 }
 
 body[data-special="shrimple"] header > span::before {
     content: "Shrimple";
     display: block;
     width: 100%;
+    pointer-events: none;
     text-align: center;
     @apply text-emerald-600;
     position: absolute;
     z-index: 10;
+    user-select: none;
 }
