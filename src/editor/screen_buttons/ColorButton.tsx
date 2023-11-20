@@ -29,7 +29,7 @@ export default function ColorButton(props: Props) {
 
     return (
         <button
-            class="relative flex w-full cursor-pointer justify-center border-2 border-emerald-600 p-2 text-lg"
+            class="relative flex w-full cursor-pointer justify-center border-2 border-primary-600 p-2 text-lg"
             onMouseEnter={() => {
                 const tooltip = props.lang.option[props.colorChanger.name]?.description;
                 if (tooltip) props.setTooltip(tooltip);
@@ -46,7 +46,7 @@ export default function ColorButton(props: Props) {
             <Show when={active()}>
                 <ColorSelector
                     color={{ red: getComp("red"), green: getComp("green"), blue: getComp("blue") }}
-                    class="absolute -right-0.5 top-full z-10 border-2 border-emerald-600 bg-gray-900 p-4"
+                    class="absolute -right-0.5 top-full z-10 border-2 border-primary-600 bg-gray-900 p-4"
                     onChange={color => {
                         const redOption = componentOption("red");
                         const greenOption = componentOption("green");

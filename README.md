@@ -4,6 +4,29 @@
 
 Configuration is mostly done through the `shaders.properties` file, every extra setting lives under the `extra` namespace. Currently you can define the following:
 
+### App color scheme
+
+Lets you select the colors of the shader editor website. All color schemes are monochromatic.
+
+```
+extra.colorScheme = <Color scheme>
+```
+
+Available options:
+
+-   slate
+-   red
+-   orange
+-   amber
+-   lime
+-   emerald
+-   blue
+-   indigo
+-   purple
+-   pink
+
+This is a subset of the tailwindcss colors, refer to [these docs](https://tailwindcss.com/docs/customizing-colors) to see what the color options are.
+
 ### Colors
 
 This option lets you wrap three RGB sliders into a single color selector. The sliders for the green and blue components will be removed from every screen they are part of and the red slider will be replaced by the color selector. The selector assumes a range of [0, 1] on all three sliders.

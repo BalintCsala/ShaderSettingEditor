@@ -38,12 +38,12 @@ export default function SliderOption(props: Props) {
         <Show
             when={option()}
             fallback={
-                <div class="group relative flex h-full w-full items-center justify-center border-2 border-emerald-600 bg-emerald-950 p-2">
+                <div class="group relative flex h-full w-full items-center justify-center border-2 border-primary-600 bg-primary-950 p-2">
                     <span>Unknown option: {props.selector.name}</span>
                 </div>
             }>
             <div
-                class="group relative flex h-full w-full items-center justify-center border-2 border-emerald-600 bg-emerald-950 p-2"
+                class="group relative flex h-full w-full items-center justify-center border-2 border-primary-600 bg-primary-950 p-2"
                 onMouseEnter={() => {
                     const tooltip = props.lang.option[props.selector.name]?.description;
                     if (tooltip) props.setTooltip(tooltip);
@@ -62,15 +62,15 @@ export default function SliderOption(props: Props) {
                     if (!active()) return;
                     handleSelect(e);
                 }}>
-                <span class="select-none text-lg text-emerald-600 group-hover:hidden">
+                <span class="select-none text-lg text-primary-400 group-hover:hidden">
                     {props.lang.option[props.selector.name]?.text || props.selector.name}:{" "}
                     {props.lang.option[props.selector.name]?.values[option().value] || option().value}
                 </span>
                 <span class="select-none text-lg">&nbsp;</span>
-                <div class="absolute left-0 hidden h-1 w-full bg-emerald-600 group-hover:block" />
+                <div class="absolute left-0 hidden h-1 w-full bg-primary-600 group-hover:block" />
                 <div class="absolute left-0 right-2 top-0 hidden h-full group-hover:block">
-                    <div class="absolute z-10 h-full w-2 select-none bg-emerald-600 transition-all duration-75" style={{ left: `${percentage()}%` }}>
-                        <span class="pointer-events-none absolute top-full border-2 border-emerald-800 bg-emerald-950 p-2 text-lg text-emerald-600">
+                    <div class="absolute z-10 h-full w-2 select-none bg-primary-600 transition-all duration-75" style={{ left: `${percentage()}%` }}>
+                        <span class="pointer-events-none absolute top-full border-2 border-primary-800 bg-primary-950 p-2 text-lg text-primary-400">
                             {props.lang.option[props.selector.name]?.values[option().value] || option().value}
                         </span>
                     </div>

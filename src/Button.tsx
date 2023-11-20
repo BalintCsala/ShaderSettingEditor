@@ -19,7 +19,7 @@ export default function Button(props: Props) {
             onMouseLeave={() => props.onMouseLeave?.()}
             onBlur={() => props.onBlur?.()}
             class={twMerge(
-                "border-2 border-emerald-600 bg-emerald-950 p-2 text-lg text-emerald-600 duration-75 transition-colors hover:bg-emerald-900 active:bg-emerald-800",
+                "border-2 border-primary-600 bg-primary-950 p-2 text-lg text-primary-400 duration-75 transition-colors hover:bg-primary-900 active:bg-primary-800",
                 props.class ?? "",
             )}>
             {props.children}

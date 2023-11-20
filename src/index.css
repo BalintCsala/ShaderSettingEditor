@@ -21,7 +21,7 @@
 
     .list-dashed > li::before {
         content: " - ";
-        @apply text-emerald-600;
+        @apply text-primary-400;
     }
 
     .text-shadow {
@@ -29,6 +29,150 @@
         font-weight: bold;
     }
 }
+
+/* Colors */
+
+:root {
+    --color-50: #ecfdf5;
+    --color-100: #d1fae5;
+    --color-200: #a7f3d0;
+    --color-300: #6ee7b7;
+    --color-400: #34d399;
+    --color-500: #10b981;
+    --color-600: #059669;
+    --color-700: #047857;
+    --color-800: #065f46;
+    --color-900: #064e3b;
+    --color-950: #022c22;
+}
+
+html[data-theme="slate"] {
+    --color-50: #f8fafc;
+    --color-100: #f1f5f9;
+    --color-200: #e2e8f0;
+    --color-300: #cbd5e1;
+    --color-400: #94a3b8;
+    --color-500: #64748b;
+    --color-600: #475569;
+    --color-700: #334155;
+    --color-800: #1e293b;
+    --color-900: #0f172a;
+    --color-950: #020617;
+}
+
+html[data-theme="red"] {
+    --color-50: #fef2f2;
+    --color-100: #fee2e2;
+    --color-200: #fecaca;
+    --color-300: #fca5a5;
+    --color-400: #f87171;
+    --color-500: #ef4444;
+    --color-600: #dc2626;
+    --color-700: #b91c1c;
+    --color-800: #991b1b;
+    --color-900: #7f1d1d;
+    --color-950: #450a0a;
+}
+
+html[data-theme="orange"] {
+    --color-50: #fff7ed;
+    --color-100: #ffedd5;
+    --color-200: #fed7aa;
+    --color-300: #fdba74;
+    --color-400: #fb923c;
+    --color-500: #f97316;
+    --color-600: #ea580c;
+    --color-700: #c2410c;
+    --color-800: #9a3412;
+    --color-900: #7c2d12;
+    --color-950: #431407;
+}
+
+html[data-theme="amber"] {
+    --color-50: #fffbeb;
+    --color-100: #fef3c7;
+    --color-200: #fde68a;
+    --color-300: #fcd34d;
+    --color-400: #fbbf24;
+    --color-500: #f59e0b;
+    --color-600: #d97706;
+    --color-700: #b45309;
+    --color-800: #92400e;
+    --color-900: #78350f;
+    --color-950: #451a03;
+}
+
+html[data-theme="lime"] {
+    --color-50: #f7fee7;
+    --color-100: #ecfccb;
+    --color-200: #d9f99d;
+    --color-300: #bef264;
+    --color-400: #a3e635;
+    --color-500: #84cc16;
+    --color-600: #65a30d;
+    --color-700: #4d7c0f;
+    --color-800: #3f6212;
+    --color-900: #365314;
+    --color-950: #1a2e05;
+}
+
+html[data-theme="blue"] {
+    --color-50: #eff6ff;
+    --color-100: #dbeafe;
+    --color-200: #bfdbfe;
+    --color-300: #93c5fd;
+    --color-400: #60a5fa;
+    --color-500: #3b82f6;
+    --color-600: #2563eb;
+    --color-700: #1d4ed8;
+    --color-800: #1e40af;
+    --color-900: #1e3a8a;
+    --color-950: #172554;
+}
+
+html[data-theme="indigo"] {
+    --color-50: #eef2ff;
+    --color-100: #e0e7ff;
+    --color-200: #c7d2fe;
+    --color-300: #a5b4fc;
+    --color-400: #818cf8;
+    --color-500: #6366f1;
+    --color-600: #4f46e5;
+    --color-700: #4338ca;
+    --color-800: #3730a3;
+    --color-900: #312e81;
+    --color-950: #1e1b4b;
+}
+
+html[data-theme="purple"] {
+    --color-50: #faf5ff;
+    --color-100: #f3e8ff;
+    --color-200: #e9d5ff;
+    --color-300: #d8b4fe;
+    --color-400: #c084fc;
+    --color-500: #a855f7;
+    --color-600: #9333ea;
+    --color-700: #7e22ce;
+    --color-800: #6b21a8;
+    --color-900: #581c87;
+    --color-950: #3b0764;
+}
+
+html[data-theme="pink"] {
+    --color-50: #fdf2f8;
+    --color-100: #fce7f3;
+    --color-200: #fbcfe8;
+    --color-300: #f9a8d4;
+    --color-400: #f472b6;
+    --color-500: #ec4899;
+    --color-600: #db2777;
+    --color-700: #be185d;
+    --color-800: #9d174d;
+    --color-900: #831843;
+    --color-950: #500724;
+}
+
+/* Specialization */
 
 .overlay {
     position: absolute;
@@ -70,7 +214,7 @@ body[data-special="vector"] header > span::before {
     width: 100%;
     pointer-events: none;
     text-align: center;
-    @apply text-emerald-600;
+    @apply text-primary-400;
     position: absolute;
     z-index: 10;
     user-select: none;
@@ -99,7 +243,7 @@ body[data-special="shrimple"] header > span::before {
     width: 100%;
     pointer-events: none;
     text-align: center;
-    @apply text-emerald-600;
+    @apply text-primary-400;
     position: absolute;
     z-index: 10;
     user-select: none;

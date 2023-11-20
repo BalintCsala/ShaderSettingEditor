@@ -88,7 +88,7 @@ export default function ShaderEditor(props: Props) {
     });
 
     return (
-        <Show when={zip()} fallback={<span class="text-emerald-600">Loading file...</span>}>
+        <Show when={zip()} fallback={<span class="text-primary-400">Loading file...</span>}>
             <ScreenStack lang={currentLang()} screenStack={screenStack()} setScreenStack={setScreenStack} />
             <div class="grid gap-2 p-2" style={{ "grid-template-columns": `repeat(${currentScreen().columns}, 1fr)` }}>
                 <For each={currentScreen().children}>
@@ -161,7 +161,7 @@ export default function ShaderEditor(props: Props) {
                     )}
                 </For>
             </div>
-            <div class="m-2 mb-0 grow border-2 border-emerald-600 p-2 text-lg text-emerald-600">
+            <div class="m-2 mb-0 grow border-2 border-primary-600 p-2 text-lg text-primary-400">
                 <For each={tooltip().split(/(?<=\.)\s/g)}>{part => <p>{part}</p>}</For>
             </div>
             <div class="flex justify-between p-2">
