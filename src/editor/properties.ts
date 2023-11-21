@@ -106,6 +106,12 @@ function parseScreenElements(list: string) {
         });
 }
 
+function checkIfIdentifierIsCorrect(identifier: string) {
+    if (identifier.startsWith("-")) return false;
+    if (identifier.match(/[^a-z-]/)) return false;
+    return true;
+}
+
 export function parseProperties(propertiesFile: string, parsedOptions: Options) {
     const screens: Screens = {};
     const profiles: { [key: string]: (Setting | CopyProfile)[] } = {};
@@ -113,6 +119,7 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
     const colorReplaceMap = new Map<string, string | null>();
     let sliders: string[] = [];
     let special = "";
+    let identifier: string | null = null;
     const hiddenOptions: { [key: string]: string } = {};
     const appends: { screenName: string; index: number; options: string }[] = [];
 
@@ -195,6 +202,14 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
                 }
                 case "extra": {
                     switch (path[1]) {
+                        case "identifier": {
+                            if (!checkIfIdentifierIsCorrect(right)) {
+                                console.warn("Identifier is incorrect");
+                                break;
+                            }
+                            identifier = right;
+                            break;
+                        }
                         case "colors": {
                             const name = path[2];
                             const [red, green, blue] = right.split(/\s+/g);
@@ -318,5 +333,6 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
         sliders,
         special,
         hiddenOptions,
+        identifier,
     };
 }

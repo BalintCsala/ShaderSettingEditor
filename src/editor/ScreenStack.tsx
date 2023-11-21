@@ -9,7 +9,7 @@ interface Props {
 
 export default function ScreenStack(props: Props) {
     return (
-        <div class="flex p-2">
+        <div class="flex grow">
             <For each={props.screenStack}>
                 {(screenName, index) => (
                     <button

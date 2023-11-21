@@ -1,0 +1,163 @@
+.card:nth-child(1) {
+    animation: card1 1s ease infinite;
+}
+
+@keyframes card1 {
+    0% {
+        bottom: 0em;
+        left: 1.25em;
+    }
+
+    23% {
+        bottom: 0em;
+        left: 0em;
+    }
+
+    33% {
+        bottom: 0em;
+        left: 0em;
+    }
+
+    57% {
+        bottom: 0.75em;
+        left: 0em;
+    }
+
+    67% {
+        bottom: 0.75em;
+        left: 0em;
+    }
+
+    90% {
+        bottom: 0.75em;
+        left: 1.25em;
+    }
+
+    100% {
+        bottom: 0.75em;
+        left: 1.25em;
+    }
+}
+
+.card:nth-child(2) {
+    animation: card2 1s ease infinite;
+}
+
+@keyframes card2 {
+    0% {
+        bottom: 0.75em;
+        left: 1.25em;
+    }
+
+    23% {
+        bottom: 0.75em;
+        left: 0em;
+    }
+
+    33% {
+        bottom: 0.75em;
+        left: 0em;
+    }
+
+    57% {
+        bottom: 2.25em;
+        left: 0em;
+    }
+
+    67% {
+        bottom: 2.25em;
+        left: 0em;
+    }
+
+    90% {
+        bottom: 2.25em;
+        left: 1.25em;
+    }
+
+    100% {
+        bottom: 2.25em;
+        left: 1.25em;
+    }
+}
+
+.card:nth-child(3) {
+    animation: card3 1s ease infinite;
+}
+
+@keyframes card3 {
+    0% {
+        bottom: 1.5em;
+        left: 1.25em;
+    }
+
+    23% {
+        bottom: 1.5em;
+        left: 2.5em;
+    }
+
+    33% {
+        bottom: 1.5em;
+        left: 2.5em;
+    }
+
+    57% {
+        bottom: 0em;
+        left: 2.5em;
+    }
+
+    67% {
+        bottom: 0em;
+        left: 2.5em;
+    }
+
+    90% {
+        bottom: 0em;
+        left: 1.25em;
+    }
+
+    100% {
+        bottom: 0em;
+        left: 1.25em;
+    }
+}
+
+.card:nth-child(4) {
+    animation: card4 1s ease infinite;
+}
+
+@keyframes card4 {
+    0% {
+        bottom: 2.25em;
+        left: 1.25em;
+    }
+
+    23% {
+        bottom: 2.25em;
+        left: 2.5em;
+    }
+
+    33% {
+        bottom: 2.25em;
+        left: 2.5em;
+    }
+
+    57% {
+        bottom: 1.5em;
+        left: 2.5em;
+    }
+
+    67% {
+        bottom: 1.5em;
+        left: 2.5em;
+    }
+
+    90% {
+        bottom: 1.5em;
+        left: 1.25em;
+    }
+
+    100% {
+        bottom: 1.5em;
+        left: 1.25em;
+    }
+}

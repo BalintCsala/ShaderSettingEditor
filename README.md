@@ -4,6 +4,31 @@
 
 Configuration is mostly done through the `shaders.properties` file, every extra setting lives under the `extra` namespace. Currently you can define the following:
 
+### Identifier
+
+Make sure to set this if you want your shader to participate in the custom profile system.
+
+```
+extra.identifier = <Your unique identifier>
+
+# Example (please don't actually name it like this):
+extra.identifier = my-awesome-shader
+```
+
+The identifier has the following rules:
+
+-   It has to be unique.
+-   It should be readable, if someone just sees the identifier they should be able to tell what shader it belongs to.
+-   It has to stay constant once you've chosen one (otherwise data associated with your pack will be soft-reset).
+-   It can only contain lowercase latin letters and dashes and it has to start with a letter.
+-   It can't contain any vulgarity.
+
+Ideally the identifier should be the name of your shader in lowercase with spaces replaced by dashes, for instance the shader `My awesome shader` would become `my-awesome-shader`.
+
+If you have to change it in the future, you can contact me, but I keep my rights to refuse the request if I feel it's abusing the system.
+
+Getting around these rules will result in a permanent ban from the service.
+
 ### App color scheme
 
 Lets you select the colors of the shader editor website. All color schemes are monochromatic.

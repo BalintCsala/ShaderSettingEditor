@@ -2,16 +2,19 @@ import JSZip from "jszip";
 import { For, Match, Show, Switch, createEffect, createSignal } from "solid-js";
 import Button from "../Button";
 import Icon from "../Icon/Icon";
+import Spinner from "../components/Spinner/Spinner";
+import CustomProfiles from "./CustomProfiles";
+import PostCustomProfile from "./PostCustomProfile";
 import ScreenStack from "./ScreenStack";
-import { ColorChanger, ColorOptions, Link, OptionSelector, Profiles, Screens, parseProperties } from "./properties";
+import { exportOptions } from "./export";
 import { EMPTY_LANGS, getDefaultLanguage, parseLangFiles } from "./languages";
 import { Options, parseOptions } from "./options";
+import { ColorChanger, ColorOptions, Link, OptionSelector, Profiles, Screens, parseProperties } from "./properties";
 import ColorButton from "./screen_buttons/ColorButton";
 import LinkButton from "./screen_buttons/LinkButton";
 import { OptionButton } from "./screen_buttons/OptionButton";
 import ProfileButton from "./screen_buttons/ProfileButton";
 import SliderOption from "./screen_buttons/SliderOption";
-import { exportOptions } from "./export";
 
 interface Props {
     file: File;
@@ -31,6 +34,7 @@ export default function ShaderEditor(props: Props) {
     const [currentLangName, setCurrentLangName] = createSignal("en_us");
     const [tooltip, setTooltip] = createSignal(DEFAULT_TOOLTIP);
     const [hiddenOptions, setHiddenOptions] = createSignal<{ [key: string]: string }>({});
+    const [identifier, setIdentifier] = createSignal<string | null>(null);
     const resetTooltip = () => setTooltip(DEFAULT_TOOLTIP);
 
     const [screenStack, setScreenStack] = createSignal(["main"]);
@@ -54,7 +58,7 @@ export default function ShaderEditor(props: Props) {
 
             const shadersProperties = await shadersPropertiesFile.async("string");
             const options = await parseOptions(zip);
-            const { screens, profiles, colors, sliders, special, hiddenOptions } = parseProperties(shadersProperties, options);
+            const { screens, profiles, colors, sliders, special, hiddenOptions, identifier } = parseProperties(shadersProperties, options);
             const langs = await parseLangFiles(zip);
 
             setScreens(screens);
@@ -64,6 +68,7 @@ export default function ShaderEditor(props: Props) {
             setSliders(sliders);
             setCurrentLangName(getDefaultLanguage(langs));
             setHiddenOptions(hiddenOptions);
+            setIdentifier(identifier);
 
             Object.entries(hiddenOptions).forEach(([name, value]) => {
                 const option = options[name];
@@ -88,8 +93,23 @@ export default function ShaderEditor(props: Props) {
     });
 
     return (
-        <Show when={zip()} fallback={<span class="text-primary-400">Loading file...</span>}>
-            <ScreenStack lang={currentLang()} screenStack={screenStack()} setScreenStack={setScreenStack} />
+        <Show
+            when={zip()}
+            fallback={
+                <div class="flex h-full w-full items-center justify-center">
+                    <Spinner />
+                </div>
+            }>
+            <div class="flex justify-between p-2">
+                <ScreenStack lang={currentLang()} screenStack={screenStack()} setScreenStack={setScreenStack} />
+
+                <Show when={screenStack().length > 1}>
+                    <Button onClick={() => setScreenStack(screenStack().slice(0, -1))}>
+                        <Icon class="mr-2" icon="arrow_back" />
+                        Back
+                    </Button>
+                </Show>
+            </div>
             <div class="grid gap-2 p-2" style={{ "grid-template-columns": `repeat(${currentScreen().columns}, 1fr)` }}>
                 <For each={currentScreen().children}>
                     {element => (
@@ -164,26 +184,46 @@ export default function ShaderEditor(props: Props) {
             <div class="m-2 mb-0 grow border-2 border-primary-600 p-2 text-lg text-primary-400">
                 <For each={tooltip().split(/(?<=\.)\s/g)}>{part => <p>{part}</p>}</For>
             </div>
-            <div class="flex justify-between p-2">
-                <div>
-                    <Button
-                        onClick={() => {
-                            const languages = Object.keys(langs());
-                            setCurrentLangName(languages[(languages.indexOf(currentLangName()) + 1) % languages.length]);
-                        }}>
-                        <Icon icon="language" />
-                        {currentLangName().toUpperCase()}
-                    </Button>
-                    <Button class="ml-4" onClick={() => exportOptions(options(), props.file.name)}>
-                        <Icon icon="download" />
-                        Export settings
-                    </Button>
-                </div>
-                <Show when={screenStack().length > 1}>
-                    <Button onClick={() => setScreenStack(screenStack().slice(0, -1))}>
-                        <Icon icon="arrow_back" />
-                        Back
-                    </Button>
+            <div class="flex justify-center gap-2 p-2">
+                <Button
+                    onClick={() => {
+                        const languages = Object.keys(langs());
+                        setCurrentLangName(languages[(languages.indexOf(currentLangName()) + 1) % languages.length]);
+                    }}>
+                    <Icon class="mr-2" icon="language" />
+                    {currentLangName().toUpperCase()}
+                </Button>
+                <Button onClick={() => exportOptions(options(), props.file.name)}>
+                    <Icon class="mr-2" icon="download" />
+                    Export settings
+                </Button>
+                <Show when={identifier()}>
+                    {identifier => (
+                        <>
+                            <CustomProfiles
+                                identifier={identifier()}
+                                selectProfile={profile => {
+                                    const copy = { ...options() };
+                                    for (const key in copy) {
+                                        if (key in profile) {
+                                            switch (copy[key].type) {
+                                                case "boolean": {
+                                                    copy[key].value = profile[key] === "true";
+                                                    break;
+                                                }
+                                                case "text": {
+                                                    copy[key].value = profile[key];
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    setScreenStack(["main"]);
+                                }}
+                            />
+                            <PostCustomProfile identifier={identifier()} options={options()} />
+                        </>
+                    )}
                 </Show>
             </div>
         </Show>
