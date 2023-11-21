@@ -219,6 +219,7 @@ export default function ShaderEditor(props: Props) {
                                         }
                                     }
                                     setScreenStack(["main"]);
+                                    setCurrentProfileName(profile.title);
                                 }}
                             />
                             <PostCustomProfile identifier={identifier()} options={options()} />
