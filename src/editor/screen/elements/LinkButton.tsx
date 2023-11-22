@@ -1,14 +1,13 @@
-import Button from "../../components/Button";
-import ColoredText from "../../components/ColoredText";
-import Icon from "../../Icon/Icon";
-import { Link, Screens } from "../properties";
-import { Lang } from "../languages";
+import { Setter } from "solid-js";
+import Button from "../../../components/Button";
+import ColoredText from "../../../components/ColoredText";
+import Icon from "../../../components/Icon";
+import { Lang } from "../../languages";
+import { LinkElement } from "../Screen";
 
 interface Props {
-    screenStack: string[];
-    screens: Screens;
-    setScreenStack: (stack: string[]) => void;
-    link: Link;
+    setScreenStack: Setter<string[]>;
+    link: LinkElement;
     lang: Lang;
     setTooltip: (tooltip: string) => void;
     resetTooltip: () => void;
@@ -25,11 +24,10 @@ export default function LinkButton(props: Props) {
             onBlur={() => props.resetTooltip()}
             class="h-full w-full"
             onClick={() => {
-                if (props.link.name in props.screens)
-                    props.setScreenStack([
-                        ...props.screenStack,
-                        props.link.name,
-                    ]);
+                props.setScreenStack(prevScreenStack => [
+                    ...prevScreenStack,
+                    props.link.name,
+                ]);
             }}>
             <ColoredText>
                 {props.lang.screen[props.link.name]?.text || props.link.name}

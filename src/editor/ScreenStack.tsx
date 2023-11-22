@@ -1,9 +1,10 @@
 import { For, Show } from "solid-js";
 import { Lang } from "./languages";
+import { Setter } from "solid-js";
 
 interface Props {
     screenStack: string[];
-    setScreenStack: (stack: string[]) => void;
+    setScreenStack: Setter<string[]>;
     lang: Lang;
 }
 

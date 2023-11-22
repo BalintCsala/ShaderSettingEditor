@@ -1,29 +1,18 @@
 import JSZip from "jszip";
-import { For, Match, Show, Switch, createEffect, createSignal } from "solid-js";
+import { For, Show, createEffect, createSignal } from "solid-js";
 import Button from "../components/Button";
-import Icon from "../Icon/Icon";
+import Icon from "../components/Icon";
 import Spinner from "../components/Spinner/Spinner";
-import CustomProfiles from "./editor_buttons/CustomProfiles";
-import PostCustomProfile from "./editor_buttons/PostCustomProfile";
 import ScreenStack from "./ScreenStack";
+import CustomProfiles from "./editor_buttons/CustomProfiles";
+import LanguageButton from "./editor_buttons/LanguageButton";
+import PostCustomProfile from "./editor_buttons/PostCustomProfile";
 import { exportOptions } from "./export";
 import { EMPTY_LANGS, getDefaultLanguage, parseLangFiles } from "./languages";
 import { Options, parseOptions } from "./options";
-import {
-    ColorChanger,
-    ColorOptions,
-    Link,
-    OptionSelector,
-    Profiles,
-    Screens,
-    parseProperties,
-} from "./properties";
-import ColorButton from "./screen_buttons/ColorButton";
-import LinkButton from "./screen_buttons/LinkButton";
-import { OptionButton } from "./screen_buttons/OptionButton";
-import ProfileButton from "./screen_buttons/ProfileButton";
-import SliderOption from "./screen_buttons/SliderOption";
-import LanguageButton from "./editor_buttons/LanguageButton";
+import { Profiles, Screens, parseProperties } from "./properties";
+import { ColorOptionGroups } from "./properties";
+import Screen from "./screen/Screen";
 
 interface Props {
     file: File;
@@ -36,7 +25,7 @@ export default function ShaderEditor(props: Props) {
 
     const [screens, setScreens] = createSignal<Screens>({});
     const [profiles, setProfiles] = createSignal<Profiles>({});
-    const [colors, setColors] = createSignal<ColorOptions>({});
+    const [colors, setColors] = createSignal<ColorOptionGroups>({});
     const [options, setOptions] = createSignal<Options>({});
     const [sliders, setSliders] = createSignal<string[]>([]);
     const [langs, setLangs] = createSignal(EMPTY_LANGS);
@@ -45,6 +34,7 @@ export default function ShaderEditor(props: Props) {
     const [hiddenOptions, setHiddenOptions] = createSignal<{
         [key: string]: string;
     }>({});
+
     const [identifier, setIdentifier] = createSignal<string | null>(null);
     const resetTooltip = () => setTooltip(DEFAULT_TOOLTIP);
 
@@ -54,7 +44,10 @@ export default function ShaderEditor(props: Props) {
     const currentScreenName = () => screenStack()[screenStack().length - 1];
     const currentScreen = () => screens()[currentScreenName()];
     const currentLang = () => langs()[currentLangName()];
-    const setOptionsAndResetProfile = (options: Options) => {
+
+    const setOptionsAndResetProfile = (
+        options: Options | ((prev: Options) => Options),
+    ) => {
         setOptions(options);
         setCurrentProfileName("Custom");
     };
@@ -146,102 +139,21 @@ export default function ShaderEditor(props: Props) {
                 </Show>
             </div>
             <div class="m-2 h-3/5 overflow-y-auto border-2 border-primary-600">
-                <div
-                    class="grid gap-2 p-2"
-                    style={{
-                        "grid-template-columns": `repeat(${
-                            currentScreen().columns
-                        }, 1fr)`,
-                    }}>
-                    <For each={currentScreen().children}>
-                        {element => (
-                            <div class="self-stretch">
-                                <Switch>
-                                    <Match when={element.type === "empty"}>
-                                        <span class="select-none">&nbsp;</span>
-                                    </Match>
-                                    <Match when={element.type === "link"}>
-                                        <LinkButton
-                                            lang={currentLang()}
-                                            link={element as Link}
-                                            screenStack={screenStack()}
-                                            setScreenStack={setScreenStack}
-                                            setTooltip={setTooltip}
-                                            resetTooltip={resetTooltip}
-                                            screens={screens()}
-                                        />
-                                    </Match>
-                                    <Match when={element.type === "profile"}>
-                                        <ProfileButton
-                                            currentProfileName={currentProfileName()}
-                                            options={options()}
-                                            profiles={profiles()}
-                                            setCurrentProfileName={
-                                                setCurrentProfileName
-                                            }
-                                            setOptions={
-                                                setOptionsAndResetProfile
-                                            }
-                                            lang={currentLang()}
-                                            setTooltip={setTooltip}
-                                            resetTooltip={resetTooltip}
-                                            hiddenOptions={hiddenOptions()}
-                                        />
-                                    </Match>
-                                    <Match when={element.type === "option"}>
-                                        <Show
-                                            when={sliders().includes(
-                                                (element as OptionSelector)
-                                                    .name,
-                                            )}
-                                            fallback={
-                                                <OptionButton
-                                                    lang={currentLang()}
-                                                    selector={
-                                                        element as OptionSelector
-                                                    }
-                                                    options={options()}
-                                                    setOptions={
-                                                        setOptionsAndResetProfile
-                                                    }
-                                                    setTooltip={setTooltip}
-                                                    resetTooltip={resetTooltip}
-                                                />
-                                            }>
-                                            <SliderOption
-                                                lang={currentLang()}
-                                                options={options()}
-                                                setOptions={
-                                                    setOptionsAndResetProfile
-                                                }
-                                                selector={
-                                                    element as OptionSelector
-                                                }
-                                                setTooltip={setTooltip}
-                                                resetTooltip={resetTooltip}
-                                            />
-                                        </Show>
-                                    </Match>
-                                    <Match when={element.type === "color"}>
-                                        <ColorButton
-                                            options={options()}
-                                            setOptions={
-                                                setOptionsAndResetProfile
-                                            }
-                                            lang={currentLang()}
-                                            colorChanger={
-                                                element as ColorChanger
-                                            }
-                                            colors={colors()}
-                                            setTooltip={setTooltip}
-                                            resetTooltip={resetTooltip}
-                                        />
-                                    </Match>
-                                </Switch>
-                            </div>
-                        )}
-                    </For>
-                </div>
+                <Screen
+                    colorGroups={colors()}
+                    currentProfileName={currentProfileName()}
+                    hiddenOptions={hiddenOptions()}
+                    lang={currentLang()}
+                    options={options()}
+                    profiles={profiles()}
+                    resetTooltip={() => resetTooltip()}
+                    screen={currentScreen()}
+                    setCurrentProfileName={setCurrentProfileName}
+                    setOptions={setOptionsAndResetProfile}
+                    setScreenStack={setScreenStack}
+                    setTooltip={setTooltip}
+                    sliders={sliders()}
+                />
             </div>
             <div class="m-2 mb-0 grow border-2 border-primary-600 p-2 text-lg text-primary-400">
                 <For each={tooltip().split(/(?<=\.)\s/g)}>

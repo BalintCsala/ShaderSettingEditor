@@ -1,7 +1,7 @@
 import { JSX } from "solid-js/jsx-runtime";
 import { Portal } from "solid-js/web";
 import { twMerge } from "tailwind-merge";
-import Icon from "../Icon/Icon";
+import Icon from "./Icon";
 
 interface Props {
     children: JSX.Element;

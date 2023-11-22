@@ -1,79 +1,16 @@
 import { Options } from "./options";
+import { ScreenElement } from "./screen/Screen";
+import { ScreenData } from "./screen/Screen";
+import { ColorOptionGroup } from "./screen/elements/ColorButton";
+import { Setting } from "./screen/elements/ProfileButton";
 
-export interface Link {
-    type: "link";
-    name: string;
-}
-
-export interface OptionSelector {
-    type: "option";
-    name: string;
-}
-
-export interface ColorChanger {
-    type: "color";
-    name: string;
-}
-
-export interface Profile {
-    type: "profile";
-}
-
-export interface Empty {
-    type: "empty";
-}
-
-export type ScreenElement =
-    | Link
-    | OptionSelector
-    | Profile
-    | Empty
-    | ColorChanger;
-
-export interface Screen {
-    columns: number;
-    children: ScreenElement[];
-}
-
-export interface TextSetting {
-    type: "textSetting";
-    name: string;
-    value: string;
-}
-
-export interface BooleanSetting {
-    type: "booleanSetting";
-    name: string;
-    value: boolean;
-}
+export type Screens = { [key: string]: ScreenData };
+export type Profiles = { [key: string]: Setting[] };
+export type ColorOptionGroups = { [key: string]: ColorOptionGroup };
 
 export interface CopyProfile {
     type: "copyProfile";
     name: string;
-}
-
-export type Setting = TextSetting | BooleanSetting;
-
-export type Screens = { [key: string]: Screen };
-
-export type Profiles = { [key: string]: Setting[] };
-
-export interface ColorOption {
-    red: string;
-    blue: string;
-    green: string;
-}
-
-export type ColorOptions = { [key: string]: ColorOption };
-
-export interface Properties {
-    screens: Screens;
-    profiles: Profiles;
-    colors: ColorOptions;
-    sliders: string[];
-    special: string;
-    colorScheme: string;
-    hiddenOptions: { [key: string]: string };
 }
 
 function flattenSettings(
@@ -121,13 +58,67 @@ function checkIfIdentifierIsCorrect(identifier: string) {
     return true;
 }
 
+function parseScreen(
+    path: string[],
+    right: string,
+    parsedOptions: Options,
+): Partial<ScreenData> {
+    if (path[2] === "columns") {
+        return {
+            columns: parseInt(right),
+        };
+    }
+    if (right === "*") {
+        return {
+            columns: 3,
+            children: Object.keys(parsedOptions).map(name => {
+                return {
+                    type: "option",
+                    name,
+                };
+            }),
+        };
+    }
+    return {
+        children: parseScreenElements(right),
+    };
+}
+
+function parseProfileSettings(right: string) {
+    return right
+        .trim()
+        .split(/\s+/g)
+        .map(element => {
+            if (element.startsWith("profile")) {
+                const name = element.replace("profile.", "");
+                return {
+                    type: "copyProfile" as const,
+                    name,
+                };
+            }
+            if (element.indexOf(":") !== -1) {
+                const [name, value] = element.split(":");
+                return {
+                    type: "textSetting" as const,
+                    name,
+                    value,
+                };
+            }
+            return {
+                type: "booleanSetting" as const,
+                name: element.replace(/!/g, ""),
+                value: element.indexOf("!") !== -1,
+            };
+        });
+}
+
 export function parseProperties(
     propertiesFile: string,
     parsedOptions: Options,
 ) {
     const screens: Screens = {};
     const profiles: { [key: string]: (Setting | CopyProfile)[] } = {};
-    const colors: ColorOptions = {};
+    const colors: ColorOptionGroups = {};
     const colorReplaceMap = new Map<string, string | null>();
     let sliders: string[] = [];
     let special = "";
@@ -152,62 +143,15 @@ export function parseProperties(
             switch (path[0]) {
                 case "screen": {
                     const name = path[1] ?? "main";
-                    if (path[2] === "columns") {
-                        screens[name] = {
-                            ...(screens[name] ?? { children: [] }),
-                            columns: parseInt(right),
-                        };
-                        break;
-                    }
-                    if (right === "*") {
-                        screens[name] = {
-                            columns: 3,
-                            children: Object.keys(parsedOptions).map(name => {
-                                return {
-                                    type: "option",
-                                    name,
-                                };
-                            }),
-                        };
-                        break;
-                    }
-                    const children = parseScreenElements(right);
                     screens[name] = {
-                        ...(screens[name] ?? { columns: 2 }),
-                        children,
+                        ...(screens[name] ?? { columns: 2, children: [] }),
+                        ...parseScreen(path, right, parsedOptions),
                     };
-
                     break;
                 }
                 case "profile": {
                     const name = path[1];
-
-                    const settings = right
-                        .trim()
-                        .split(/\s+/g)
-                        .map(element => {
-                            if (element.startsWith("profile")) {
-                                const name = element.replace("profile.", "");
-                                return {
-                                    type: "copyProfile" as const,
-                                    name,
-                                };
-                            }
-                            if (element.indexOf(":") !== -1) {
-                                const [name, value] = element.split(":");
-                                return {
-                                    type: "textSetting" as const,
-                                    name,
-                                    value,
-                                };
-                            }
-                            return {
-                                type: "booleanSetting" as const,
-                                name: element.replace(/!/g, ""),
-                                value: element.indexOf("!") !== -1,
-                            };
-                        });
-                    profiles[name] = settings;
+                    profiles[name] = parseProfileSettings(right);
                     break;
                 }
                 case "sliders": {

@@ -1,6 +1,6 @@
 import { Show, createSignal } from "solid-js";
 import AboutButton from "./AboutButton";
-import Icon from "./Icon/Icon";
+import Icon from "./components/Icon";
 import ShaderEditor from "./editor/ShaderEditor";
 import SupportButton from "./SupportButton";
 

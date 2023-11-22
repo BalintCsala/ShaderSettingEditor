@@ -1,6 +1,6 @@
 import { createSignal, Show } from "solid-js";
 import Button from "./components/Button";
-import Icon from "./Icon/Icon";
+import Icon from "./components/Icon";
 import ModalContainer from "./components/ModalContainer";
 
 import PatreonLogo from "./assets/patreon.svg";

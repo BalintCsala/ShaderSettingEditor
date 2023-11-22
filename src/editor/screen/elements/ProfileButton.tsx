@@ -1,19 +1,33 @@
-import Button from "../../components/Button";
-import ColoredText from "../../components/ColoredText";
-import { Profiles } from "../properties";
-import { Lang } from "../languages";
-import { Options } from "../options";
+import { Setter } from "solid-js";
+import Button from "../../../components/Button";
+import ColoredText from "../../../components/ColoredText";
+import { Lang } from "../../languages";
+import { Options } from "../../options";
+import { Profiles } from "../../properties";
+
+export interface TextSetting {
+    type: "textSetting";
+    name: string;
+    value: string;
+}
+
+export interface BooleanSetting {
+    type: "booleanSetting";
+    name: string;
+    value: boolean;
+}
+
+export type Setting = TextSetting | BooleanSetting;
 
 interface Props {
-    currentProfileName: string;
-    setCurrentProfileName: (name: string) => void;
-    profiles: Profiles;
-    options: Options;
     lang: Lang;
-    setOptions: (options: Options) => void;
-    setTooltip: (tooltip: string) => void;
-    resetTooltip: () => void;
+    currentProfileName: string;
+    setCurrentProfileName: Setter<string>;
+    profiles: Profiles;
     hiddenOptions: { [key: string]: string };
+    setOptions: Setter<Options>;
+    setTooltip: Setter<string>;
+    resetTooltip: () => void;
 }
 
 export default function ProfileButton(props: Props) {
@@ -43,19 +57,21 @@ export default function ProfileButton(props: Props) {
             onClick={() => {
                 const next = nextProfile();
                 const profileSettings = props.profiles[next];
-                const optionsCopy = { ...props.options };
-                profileSettings.forEach(setting => {
-                    if (setting.name in props.hiddenOptions) return;
-                    if (!(setting.name in optionsCopy)) {
-                        console.warn(
-                            `Error while applying profile. ${setting.name} is not a setting`,
-                        );
-                        return;
-                    }
-                    optionsCopy[setting.name].value = setting.value;
+                props.setOptions(options => {
+                    const optionsCopy = { ...options };
+                    profileSettings.forEach(setting => {
+                        if (setting.name in props.hiddenOptions) return;
+                        if (!(setting.name in optionsCopy)) {
+                            console.warn(
+                                `Error while applying profile. ${setting.name} is not a setting`,
+                            );
+                            return;
+                        }
+                        optionsCopy[setting.name].value = setting.value;
+                    });
+                    return optionsCopy;
                 });
 
-                props.setOptions(optionsCopy);
                 props.setCurrentProfileName(next);
                 changeTooltip();
             }}>

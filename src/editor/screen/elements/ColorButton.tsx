@@ -1,28 +1,36 @@
-import { Show, createSignal } from "solid-js";
-import ColorSelector from "../../components/ColorSelector";
-import { ColorChanger, ColorOption, ColorOptions } from "../properties";
-import { Lang } from "../languages";
-import { Options, TextOption } from "../options";
+import { Setter, Show, createSignal } from "solid-js";
+import ColorSelector from "../../../components/ColorSelector";
+import { Lang } from "../../languages";
+import { Options, TextOption } from "../../options";
+import { ColorElement } from "../Screen";
+
+export interface ColorOptionGroup {
+    red: string;
+    blue: string;
+    green: string;
+}
 
 interface Props {
-    colorChanger: ColorChanger;
     lang: Lang;
-    options: Options;
-    colors: ColorOptions;
-    setOptions: (options: Options) => void;
-    setTooltip: (tooltip: string) => void;
+    colorChanger: ColorElement;
+    colorGroup: ColorOptionGroup;
+    redOption: TextOption;
+    greenOption: TextOption;
+    blueOption: TextOption;
     resetTooltip: () => void;
+    setOptions: Setter<Options>;
+    setTooltip: Setter<string>;
 }
 
 export default function ColorButton(props: Props) {
     const [active, setActive] = createSignal(false);
-    const colorOption = () => props.colors[props.colorChanger.name];
-    const componentOption = (comp: keyof ColorOption) => colorOption()[comp];
-    const getComp = (comp: keyof ColorOption) =>
-        parseFloat(props.options[componentOption(comp)].value as string);
+
+    const getComponent = (comp: "red" | "green" | "blue") =>
+        parseFloat(props[`${comp}Option`].value as string);
+
     const getColor = () =>
         `rgb(${(["red", "green", "blue"] as const).map(c =>
-            Math.round(getComp(c) * 255),
+            Math.round(getComponent(c) * 255),
         )})`;
 
     const clickOutside = () => {
@@ -51,31 +59,27 @@ export default function ColorButton(props: Props) {
             <Show when={active()}>
                 <ColorSelector
                     color={{
-                        red: getComp("red"),
-                        green: getComp("green"),
-                        blue: getComp("blue"),
+                        red: getComponent("red"),
+                        green: getComponent("green"),
+                        blue: getComponent("blue"),
                     }}
                     class="absolute -right-0.5 top-full z-10 border-2 border-primary-600 bg-gray-900 p-4"
                     onChange={color => {
-                        const redOption = componentOption("red");
-                        const greenOption = componentOption("green");
-                        const blueOption = componentOption("blue");
-
-                        props.setOptions({
-                            ...props.options,
-                            [redOption]: {
-                                ...(props.options[redOption] as TextOption),
+                        props.setOptions(options => ({
+                            ...options,
+                            [props.colorGroup.red]: {
+                                ...props.redOption,
                                 value: color.red.toString(),
                             },
-                            [greenOption]: {
-                                ...(props.options[greenOption] as TextOption),
+                            [props.colorGroup.green]: {
+                                ...props.greenOption,
                                 value: color.green.toString(),
                             },
-                            [blueOption]: {
-                                ...(props.options[blueOption] as TextOption),
+                            [props.colorGroup.blue]: {
+                                ...props.blueOption,
                                 value: color.blue.toString(),
                             },
-                        });
+                        }));
                     }}
                 />
             </Show>

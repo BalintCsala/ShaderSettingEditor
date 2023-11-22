@@ -6,7 +6,7 @@ import {
     signInWithPopup,
 } from "firebase/auth";
 import { Match, Show, Switch, createSignal } from "solid-js";
-import Icon from "../../Icon/Icon";
+import Icon from "../../components/Icon";
 import Button from "../../components/Button";
 import ModalContainer from "../../components/ModalContainer";
 import { auth, db } from "../../firestore";

@@ -5,7 +5,7 @@ import {
     createResource,
     createSignal,
 } from "solid-js";
-import Icon from "../../Icon/Icon";
+import Icon from "../../components/Icon";
 import Button from "../../components/Button";
 import ModalContainer from "../../components/ModalContainer";
 import { db } from "../../firestore";

@@ -2,7 +2,7 @@ import { createSignal, Show } from "solid-js";
 import Button from "./components/Button";
 import Link from "./components/Link";
 import ModalContainer from "./components/ModalContainer";
-import Icon from "./Icon/Icon";
+import Icon from "./components/Icon";
 
 export default function AboutButton() {
     const [active, setActive] = createSignal(false);

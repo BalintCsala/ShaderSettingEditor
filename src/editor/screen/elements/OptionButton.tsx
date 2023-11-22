@@ -1,21 +1,20 @@
-import { Show, Switch, Match } from "solid-js";
-import Button from "../../components/Button";
-import { OptionSelector } from "../properties";
-import { Options } from "../options";
-import { Lang } from "../languages";
-import ColoredText from "../../components/ColoredText";
+import { Match, Setter, Show, Switch } from "solid-js";
+import Button from "../../../components/Button";
+import ColoredText from "../../../components/ColoredText";
+import { Lang } from "../../languages";
+import { Option, Options } from "../../options";
+import { OptionElement } from "../Screen";
 
 interface Props {
-    selector: OptionSelector;
-    options: Options;
+    selector: OptionElement;
     lang: Lang;
-    setOptions: (options: Options) => void;
-    setTooltip: (tooltip: string) => void;
+    option: Option;
+    setOptions: Setter<Options>;
+    setTooltip: Setter<string>;
     resetTooltip: () => void;
 }
 
 export function OptionButton(props: Props) {
-    const option = () => props.options[props.selector.name];
     return (
         <Button
             onMouseEnter={() => {
@@ -29,16 +28,19 @@ export function OptionButton(props: Props) {
             class="h-full w-full"
             onClick={e => {
                 e.preventDefault();
-                const curr = option();
-                if (curr.type === "boolean") {
-                    props.setOptions({
-                        ...props.options,
-                        [props.selector.name]: { ...curr, value: !curr.value },
-                    });
+                const option = props.option;
+                if (option.type === "boolean") {
+                    props.setOptions(options => ({
+                        ...options,
+                        [props.selector.name]: {
+                            ...option,
+                            value: !option.value,
+                        },
+                    }));
                     return;
                 }
 
-                let index = curr.values.indexOf(curr.value);
+                let index = option.values.indexOf(option.value);
 
                 switch (e.button) {
                     case 0: {
@@ -50,17 +52,17 @@ export function OptionButton(props: Props) {
                         break;
                     }
                 }
-                index = (index + curr.values.length) % curr.values.length;
-                props.setOptions({
-                    ...props.options,
+                index = (index + option.values.length) % option.values.length;
+                props.setOptions(options => ({
+                    ...options,
                     [props.selector.name]: {
-                        ...curr,
-                        value: curr.values[index],
+                        ...option,
+                        value: option.values[index],
                     },
-                });
+                }));
             }}>
             <Show
-                when={option()}
+                when={props.option}
                 fallback={<span>Unknown option: {props.selector.name}</span>}>
                 {option => (
                     <span>

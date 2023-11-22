@@ -1,49 +1,49 @@
 import { createSignal, Show } from "solid-js";
-import { OptionSelector } from "../properties";
-import { Lang } from "../languages";
-import { Options, TextOption } from "../options";
+import { Options, TextOption } from "../../options";
+import { OptionElement } from "../Screen";
+import { Lang } from "../../languages";
+import { Setter } from "solid-js";
 
 interface Props {
-    selector: OptionSelector;
-    options: Options;
-    setOptions: (options: Options) => void;
     lang: Lang;
-    setTooltip: (tooltip: string) => void;
+    selector: OptionElement;
+    option: TextOption;
+    setOptions: Setter<Options>;
+    setTooltip: Setter<string>;
     resetTooltip: () => void;
 }
 
 export default function SliderOption(props: Props) {
-    const option = () => props.options[props.selector.name] as TextOption;
+    const [dragging, setDragging] = createSignal(false);
+
     const selectedIndex = () => {
-        const opt = option();
+        const opt = props.option;
         return opt.values
             .map(x => parseFloat(x).toFixed(5))
             .indexOf(parseFloat(opt.value).toFixed(5));
     };
     const percentage = () =>
-        Math.floor((selectedIndex() / (option().values.length - 1)) * 100);
-
-    const [active, setActive] = createSignal(false);
+        Math.floor((selectedIndex() / (props.option.values.length - 1)) * 100);
 
     const handleSelect = (
         e: MouseEvent & { currentTarget: HTMLDivElement },
     ) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const perc = (e.clientX - rect.x) / rect.width;
-        props.setOptions({
-            ...props.options,
+        props.setOptions(options => ({
+            ...options,
             [props.selector.name]: {
-                ...option(),
-                value: option().values[
-                    Math.round(perc * (option().values.length - 1))
+                ...props.option,
+                value: props.option.values[
+                    Math.round(perc * (props.option.values.length - 1))
                 ],
             },
-        });
+        }));
     };
 
     return (
         <Show
-            when={option()}
+            when={props.option}
             fallback={
                 <div class="group relative flex h-full w-full items-center justify-center border-2 border-primary-600 bg-primary-950 p-2">
                     <span>Unknown option: {props.selector.name}</span>
@@ -58,16 +58,16 @@ export default function SliderOption(props: Props) {
                 }}
                 onMouseLeave={() => {
                     props.resetTooltip();
-                    setActive(false);
+                    setDragging(false);
                 }}
                 onBlur={() => props.resetTooltip()}
                 onMouseDown={e => {
-                    setActive(true);
+                    setDragging(true);
                     handleSelect(e);
                 }}
-                onMouseUp={() => setActive(false)}
+                onMouseUp={() => setDragging(false)}
                 onMouseMove={e => {
-                    if (!active()) return;
+                    if (!dragging()) return;
                     handleSelect(e);
                 }}>
                 <span class="select-none text-lg text-primary-400 group-hover:hidden">
@@ -75,8 +75,8 @@ export default function SliderOption(props: Props) {
                         props.selector.name}
                     :{" "}
                     {props.lang.option[props.selector.name]?.values[
-                        option().value
-                    ] || option().value}
+                        props.option.value
+                    ] || props.option.value}
                 </span>
                 <span class="select-none text-lg">&nbsp;</span>
                 <div class="absolute left-0 hidden h-1 w-full bg-primary-600 group-hover:block" />
@@ -86,8 +86,8 @@ export default function SliderOption(props: Props) {
                         style={{ left: `${percentage()}%` }}>
                         <span class="pointer-events-none absolute top-full border-2 border-primary-800 bg-primary-950 p-2 text-lg text-primary-400">
                             {props.lang.option[props.selector.name]?.values[
-                                option().value
-                            ] || option().value}
+                                props.option.value
+                            ] || props.option.value}
                         </span>
                     </div>
                 </div>

@@ -1,13 +1,14 @@
 import { For, Show, createSignal } from "solid-js";
-import Icon from "../../Icon/Icon";
+import Icon from "../../components/Icon";
 import Button from "../../components/Button";
 import { Langs } from "../languages";
 import ModalContainer from "../../components/ModalContainer";
+import { Setter } from "solid-js";
 
 interface Props {
     langs: Langs;
     currentLangName: string;
-    setCurrentLangName: (lang: string) => void;
+    setCurrentLangName: Setter<string>;
 }
 
 export default function LanguageButton(props: Props) {
