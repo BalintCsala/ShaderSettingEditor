@@ -1,5 +1,5 @@
-import Button from "../../Button";
-import ColoredText from "../../ColoredText";
+import Button from "../../components/Button";
+import ColoredText from "../../components/ColoredText";
 import { Profiles } from "../properties";
 import { Lang } from "../languages";
 import { Options } from "../options";
@@ -37,7 +37,7 @@ export default function ProfileButton(props: Props) {
             onMouseEnter={changeTooltip}
             onMouseLeave={() => props.resetTooltip()}
             onBlur={() => props.resetTooltip()}
-            class="w-full"
+            class="h-full w-full"
             onClick={() => {
                 const next = nextProfile();
                 const profileSettings = props.profiles[next];

@@ -1,12 +1,11 @@
 import { For, Show, createEffect, createResource, createSignal } from "solid-js";
-import { Portal } from "solid-js/web";
-import Button from "../Button";
-import Icon from "../Icon/Icon";
-import ModalContainer from "../components/ModalContainer";
-import { db } from "../firestore";
+import Icon from "../../Icon/Icon";
+import Button from "../../components/Button";
+import ModalContainer from "../../components/ModalContainer";
+import { db } from "../../firestore";
 
 import { collection, getDocs } from "firebase/firestore";
-import Spinner from "../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/Spinner";
 
 type CustomProfile = {
     title: string;
@@ -60,28 +59,23 @@ export default function CustomProfiles(props: Props) {
 
     return (
         <>
-            <Button onClick={() => setActive(true)}>
-                <Icon class="mr-2" icon="public" />
-                <span class="text-primary-400">Custom profiles</span>
+            <Button class="flex grow basis-1 flex-col items-center md:grow-0 md:flex-row" onClick={() => setActive(true)}>
+                <Icon class="text-6xl sm:text-3xl md:mr-2" icon="public" />
+                <span class="hidden whitespace-nowrap text-primary-400 sm:inline">Browse profiles</span>
             </Button>
             <Show when={active()}>
-                <Portal>
-                    <ModalContainer>
-                        <button class="absolute right-2 top-2 text-primary-400" onClick={() => setActive(false)}>
-                            <Icon icon="close" class="text-4xl" />
-                        </button>
-                        <span class="mb-2 block w-full text-center text-2xl text-primary-400">Custom Profiles</span>
-                        <div class="h-96 overflow-y-auto border-2 border-primary-600 p-2">
-                            <ProfileList
-                                identifier={props.identifier}
-                                selectProfile={profile => {
-                                    setActive(false);
-                                    props.selectProfile(profile);
-                                }}
-                            />
-                        </div>
-                    </ModalContainer>
-                </Portal>
+                <ModalContainer onClose={() => setActive(false)}>
+                    <span class="mb-2 block w-full text-center text-2xl text-primary-400">Custom Profiles</span>
+                    <div class="h-96 overflow-y-auto border-2 border-primary-600 p-2">
+                        <ProfileList
+                            identifier={props.identifier}
+                            selectProfile={profile => {
+                                setActive(false);
+                                props.selectProfile(profile);
+                            }}
+                        />
+                    </div>
+                </ModalContainer>
             </Show>
         </>
     );

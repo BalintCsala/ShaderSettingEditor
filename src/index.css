@@ -248,3 +248,10 @@ body[data-special="shrimple"] header > span::before {
     z-index: 10;
     user-select: none;
 }
+
+@media (max-width: 800px) {
+    body[data-special="vector"] header > span::before,
+    body[data-special="shrimple"] header > span::before {
+        text-align: left !important;
+    }
+}

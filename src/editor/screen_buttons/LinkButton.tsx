@@ -1,5 +1,5 @@
-import Button from "../../Button";
-import ColoredText from "../../ColoredText";
+import Button from "../../components/Button";
+import ColoredText from "../../components/ColoredText";
 import Icon from "../../Icon/Icon";
 import { Link, Screens } from "../properties";
 import { Lang } from "../languages";
@@ -23,7 +23,7 @@ export default function LinkButton(props: Props) {
             }}
             onMouseLeave={() => props.resetTooltip()}
             onBlur={() => props.resetTooltip()}
-            class="w-full"
+            class="h-full w-full"
             onClick={() => {
                 if (props.link.name in props.screens) props.setScreenStack([...props.screenStack, props.link.name]);
             }}>

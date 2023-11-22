@@ -29,7 +29,7 @@ export default function ColorButton(props: Props) {
 
     return (
         <button
-            class="relative flex w-full cursor-pointer justify-center border-2 border-primary-600 p-2 text-lg"
+            class="relative flex h-full w-full cursor-pointer justify-center border-2 border-primary-600 p-2 text-lg"
             onMouseEnter={() => {
                 const tooltip = props.lang.option[props.colorChanger.name]?.description;
                 if (tooltip) props.setTooltip(tooltip);

@@ -2,6 +2,7 @@ import { Show, createSignal } from "solid-js";
 import AboutButton from "./AboutButton";
 import Icon from "./Icon/Icon";
 import ShaderEditor from "./editor/ShaderEditor";
+import SupportButton from "./SupportButton";
 
 export default function App() {
     const [file, setFile] = createSignal<File | null>(null);
@@ -10,11 +11,14 @@ export default function App() {
 
     return (
         <div class="flex h-screen w-screen max-w-6xl flex-col items-center p-4 text-4xl">
-            <header class="relative mb-4 w-full text-center">
-                <span class="text-primary-400">Extra shader editor</span>
-                <AboutButton />
+            <header class="mb-4 flex w-full justify-between text-left">
+                <span class="hidden text-primary-400 md:inline">Extra shader editor</span>
+                <div class="flex w-full justify-between gap-2 md:w-auto">
+                    <SupportButton />
+                    <AboutButton />
+                </div>
             </header>
-            <main class="relative flex w-full grow flex-col border-2 border-primary-600">
+            <main class="relative flex w-full grow flex-col overflow-y-hidden border-2 border-primary-600">
                 <Show
                     when={file()}
                     fallback={

@@ -1,9 +1,9 @@
 import { Show, Switch, Match } from "solid-js";
-import Button from "../../Button";
+import Button from "../../components/Button";
 import { OptionSelector } from "../properties";
 import { Options } from "../options";
 import { Lang } from "../languages";
-import ColoredText from "../../ColoredText";
+import ColoredText from "../../components/ColoredText";
 
 interface Props {
     selector: OptionSelector;
@@ -26,7 +26,7 @@ export function OptionButton(props: Props) {
             }}
             onMouseLeave={() => props.resetTooltip()}
             onBlur={() => props.resetTooltip()}
-            class="w-full"
+            class="h-full w-full"
             onClick={e => {
                 e.preventDefault();
                 const curr = option();
