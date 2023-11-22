@@ -59,7 +59,7 @@ export default function ShaderEditor(props: Props) {
 
             const shadersProperties = await shadersPropertiesFile.async("string");
             const options = await parseOptions(zip);
-            const { screens, profiles, colors, sliders, special, hiddenOptions, identifier } = parseProperties(shadersProperties, options);
+            const { screens, profiles, colors, sliders, special, hiddenOptions, identifier, colorScheme } = parseProperties(shadersProperties, options);
             const langs = await parseLangFiles(zip);
 
             setScreens(screens);
@@ -90,6 +90,7 @@ export default function ShaderEditor(props: Props) {
             setScreenStack(["main"]);
 
             document.body.dataset.special = special;
+            document.documentElement.dataset.theme = colorScheme;
         });
     });
 

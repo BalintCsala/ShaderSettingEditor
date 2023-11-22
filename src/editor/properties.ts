@@ -67,6 +67,7 @@ export interface Properties {
     colors: ColorOptions;
     sliders: string[];
     special: string;
+    colorScheme: string;
     hiddenOptions: { [key: string]: string };
 }
 
@@ -119,6 +120,7 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
     const colorReplaceMap = new Map<string, string | null>();
     let sliders: string[] = [];
     let special = "";
+    let colorScheme = "emerald";
     let identifier: string | null = null;
     const hiddenOptions: { [key: string]: string } = {};
     const appends: { screenName: string; index: number; options: string }[] = [];
@@ -208,6 +210,10 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
                                 break;
                             }
                             identifier = right;
+                            break;
+                        }
+                        case "colorScheme": {
+                            colorScheme = right;
                             break;
                         }
                         case "colors": {
@@ -334,5 +340,6 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
         special,
         hiddenOptions,
         identifier,
+        colorScheme,
     };
 }
