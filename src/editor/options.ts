@@ -184,7 +184,12 @@ export async function parseOptions(zip: JSZip) {
                     return;
                 }
 
-                if (!line.startsWith("#define") && !line.match(/^\/\/\s*#define/) && !line.startsWith("const")) return;
+                if (
+                    !line.startsWith("#define") &&
+                    !line.match(/^\/\/\s*#define/) &&
+                    !line.startsWith("const")
+                )
+                    return;
 
                 const parsed = parseOption(line);
                 if (parsed === null) {
@@ -198,7 +203,10 @@ export async function parseOptions(zip: JSZip) {
 
     Object.entries(options).forEach(([name, option]) => {
         if (!option.uncertain) return;
-        const found = compileTimeCheckLines.findIndex(line => line.includes(" " + name) || line.includes("(" + name)) !== -1;
+        const found =
+            compileTimeCheckLines.findIndex(
+                line => line.includes(" " + name) || line.includes("(" + name),
+            ) !== -1;
         if (found) {
             return;
         }

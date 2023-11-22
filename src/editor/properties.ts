@@ -23,7 +23,12 @@ export interface Empty {
     type: "empty";
 }
 
-export type ScreenElement = Link | OptionSelector | Profile | Empty | ColorChanger;
+export type ScreenElement =
+    | Link
+    | OptionSelector
+    | Profile
+    | Empty
+    | ColorChanger;
 
 export interface Screen {
     columns: number;
@@ -71,7 +76,10 @@ export interface Properties {
     hiddenOptions: { [key: string]: string };
 }
 
-function flattenSettings(settings: (Setting | CopyProfile)[], profiles: { [key: string]: (Setting | CopyProfile)[] }): Setting[] {
+function flattenSettings(
+    settings: (Setting | CopyProfile)[],
+    profiles: { [key: string]: (Setting | CopyProfile)[] },
+): Setting[] {
     return settings.reduce((settings, next) => {
         if (next.type !== "copyProfile") return [...settings, next];
 
@@ -113,7 +121,10 @@ function checkIfIdentifierIsCorrect(identifier: string) {
     return true;
 }
 
-export function parseProperties(propertiesFile: string, parsedOptions: Options) {
+export function parseProperties(
+    propertiesFile: string,
+    parsedOptions: Options,
+) {
     const screens: Screens = {};
     const profiles: { [key: string]: (Setting | CopyProfile)[] } = {};
     const colors: ColorOptions = {};
@@ -123,7 +134,8 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
     let colorScheme = "emerald";
     let identifier: string | null = null;
     const hiddenOptions: { [key: string]: string } = {};
-    const appends: { screenName: string; index: number; options: string }[] = [];
+    const appends: { screenName: string; index: number; options: string }[] =
+        [];
 
     const removeEmptyAfter: { [key: string]: string[] } = {};
     const removeEmptyBefore: { [key: string]: string[] } = {};
@@ -233,13 +245,19 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
                         case "removeEmptyAfter": {
                             const screenName = path[2];
                             const options = right.split(/\s+/g);
-                            removeEmptyAfter[screenName] = [...(removeEmptyAfter[screenName] ?? []), ...options];
+                            removeEmptyAfter[screenName] = [
+                                ...(removeEmptyAfter[screenName] ?? []),
+                                ...options,
+                            ];
                             break;
                         }
                         case "removeEmptyBefore": {
                             const screenName = path[2];
                             const options = right.split(/\s+/g);
-                            removeEmptyBefore[screenName] = [...(removeEmptyBefore[screenName] ?? []), ...options];
+                            removeEmptyBefore[screenName] = [
+                                ...(removeEmptyBefore[screenName] ?? []),
+                                ...options,
+                            ];
                             break;
                         }
                         case "append": {
@@ -267,7 +285,8 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
 
         for (let i = screen.children.length - 1; i > 0; i--) {
             const prev = screen.children[i - 1];
-            if (screen.children[i].type !== "empty" || prev.type !== "option") continue;
+            if (screen.children[i].type !== "empty" || prev.type !== "option")
+                continue;
 
             if (options.includes(prev.name)) {
                 screen.children.splice(i, 1);
@@ -279,7 +298,8 @@ export function parseProperties(propertiesFile: string, parsedOptions: Options) 
         const screen = screens[screenName];
         for (let i = screen.children.length - 2; i >= 0; i--) {
             const next = screen.children[i + 1];
-            if (screen.children[i].type !== "empty" || next.type !== "option") continue;
+            if (screen.children[i].type !== "empty" || next.type !== "option")
+                continue;
 
             if (options.includes(next.name)) {
                 screen.children.splice(i, 1);

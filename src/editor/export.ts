@@ -15,7 +15,10 @@ export function exportOptions(options: Options, filename: string) {
         .join("\n");
 
     const link = document.createElement("a");
-    link.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(settingsContent)}`);
+    link.setAttribute(
+        "href",
+        `data:text/plain;charset=utf-8,${encodeURIComponent(settingsContent)}`,
+    );
     link.setAttribute("download", `${filename}.txt`);
     link.click();
 }

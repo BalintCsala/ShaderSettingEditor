@@ -4,7 +4,10 @@ interface Props {
     children: string;
 }
 
-type Style = Pick<JSX.CSSProperties, "color" | "font-weight" | "text-decoration" | "font-style">;
+type Style = Pick<
+    JSX.CSSProperties,
+    "color" | "font-weight" | "text-decoration" | "font-style"
+>;
 
 const FORMAT_CODES: { [key: string]: Style } = {
     0: { color: "#000" },
@@ -27,7 +30,12 @@ const FORMAT_CODES: { [key: string]: Style } = {
     n: { "text-decoration": "underline" },
     o: { "font-style": "italic" },
     m: { "text-decoration": "line-through" },
-    r: { color: "", "font-weight": "normal", "text-decoration": "none", "font-style": "normal" },
+    r: {
+        color: "",
+        "font-weight": "normal",
+        "text-decoration": "none",
+        "font-style": "normal",
+    },
 };
 
 export default function ColoredText(props: Props) {

@@ -14,18 +14,24 @@ interface Props {
 
 function rgbToHsv(color: Color) {
     const maxComponent = Math.max(color.red, color.green, color.blue),
-        difference = maxComponent - Math.min(color.red, color.green, color.blue);
+        difference =
+            maxComponent - Math.min(color.red, color.green, color.blue);
     const hue =
         difference &&
         (maxComponent == color.red
             ? (color.green - color.blue) / difference
             : maxComponent == color.green
-            ? 2 + (color.blue - color.red) / difference
-            : 4 + (color.red - color.green) / difference);
-    return { hue: 60 * (hue < 0 ? hue + 6 : hue), saturation: maxComponent && difference / maxComponent, value: maxComponent };
+              ? 2 + (color.blue - color.red) / difference
+              : 4 + (color.red - color.green) / difference);
+    return {
+        hue: 60 * (hue < 0 ? hue + 6 : hue),
+        saturation: maxComponent && difference / maxComponent,
+        value: maxComponent,
+    };
 }
 function hsvToRgb(hue: number, saturation: number, value: number) {
-    const f = (n: number, k = (n + hue / 60) % 6) => value - value * saturation * Math.max(Math.min(k, 4 - k, 1), 0);
+    const f = (n: number, k = (n + hue / 60) % 6) =>
+        value - value * saturation * Math.max(Math.min(k, 4 - k, 1), 0);
     return { red: f(5), green: f(3), blue: f(1) };
 }
 
@@ -37,7 +43,10 @@ export default function ColorSelector(props: Props) {
         if (!mainActive() && !barActive) return;
         const rect = canvas.getBoundingClientRect();
         const relativeX = Math.min(Math.max(e.clientX - rect.x, 0), rect.width);
-        const relativeY = Math.min(Math.max(e.clientY - rect.y, 0), rect.height);
+        const relativeY = Math.min(
+            Math.max(e.clientY - rect.y, 0),
+            rect.height,
+        );
 
         if (mainActive()) {
             const { value } = rgbToHsv(props.color);
@@ -105,10 +114,20 @@ export default function ColorSelector(props: Props) {
                 for (let y = 0; y < height; y++) {
                     const hue = (x / width) * 360;
                     const saturation = 1 - y / height;
-                    const { red, green, blue } = hsvToRgb(hue, saturation, value);
-                    imageData.data[(x + y * width) * 4 + 0] = Math.round(red * 255);
-                    imageData.data[(x + y * width) * 4 + 1] = Math.round(green * 255);
-                    imageData.data[(x + y * width) * 4 + 2] = Math.round(blue * 255);
+                    const { red, green, blue } = hsvToRgb(
+                        hue,
+                        saturation,
+                        value,
+                    );
+                    imageData.data[(x + y * width) * 4 + 0] = Math.round(
+                        red * 255,
+                    );
+                    imageData.data[(x + y * width) * 4 + 1] = Math.round(
+                        green * 255,
+                    );
+                    imageData.data[(x + y * width) * 4 + 2] = Math.round(
+                        blue * 255,
+                    );
                     imageData.data[(x + y * width) * 4 + 3] = 255;
                 }
             }
@@ -147,10 +166,20 @@ export default function ColorSelector(props: Props) {
             for (let x = 0; x < 16; x++) {
                 for (let y = 0; y < height; y++) {
                     const value = 1 - y / height;
-                    const { red, green, blue } = hsvToRgb(hue, saturation, value);
-                    imageData.data[(x + y * 16) * 4 + 0] = Math.round(red * 255);
-                    imageData.data[(x + y * 16) * 4 + 1] = Math.round(green * 255);
-                    imageData.data[(x + y * 16) * 4 + 2] = Math.round(blue * 255);
+                    const { red, green, blue } = hsvToRgb(
+                        hue,
+                        saturation,
+                        value,
+                    );
+                    imageData.data[(x + y * 16) * 4 + 0] = Math.round(
+                        red * 255,
+                    );
+                    imageData.data[(x + y * 16) * 4 + 1] = Math.round(
+                        green * 255,
+                    );
+                    imageData.data[(x + y * 16) * 4 + 2] = Math.round(
+                        blue * 255,
+                    );
                     imageData.data[(x + y * 16) * 4 + 3] = 255;
                 }
             }
@@ -171,7 +200,9 @@ export default function ColorSelector(props: Props) {
     });
 
     return (
-        <div class={props.class} onClick={e => e.stopImmediatePropagation()}>
+        <div
+            class={props.class}
+            onClick={e => e.stopImmediatePropagation()}>
             <div class="flex gap-4">
                 {canvas}
                 {barCanvas}

@@ -7,12 +7,21 @@ import SupportButton from "./SupportButton";
 export default function App() {
     const [file, setFile] = createSignal<File | null>(null);
 
-    const fileUpload = (<input onChange={e => setFile(e.target.files?.[0] ?? null)} class="hidden" type="file" accept=".zip" />) as HTMLInputElement;
+    const fileUpload = (
+        <input
+            onChange={e => setFile(e.target.files?.[0] ?? null)}
+            class="hidden"
+            type="file"
+            accept=".zip"
+        />
+    ) as HTMLInputElement;
 
     return (
         <div class="flex h-screen w-screen max-w-6xl flex-col items-center p-4 text-4xl">
             <header class="mb-4 flex w-full justify-between text-left">
-                <span class="hidden text-primary-400 md:inline">Extra shader editor</span>
+                <span class="hidden text-primary-400 md:inline">
+                    Extra shader editor
+                </span>
                 <div class="flex w-full justify-between gap-2 md:w-auto">
                     <SupportButton />
                     <AboutButton />
@@ -26,8 +35,13 @@ export default function App() {
                             <button
                                 onClick={() => fileUpload.click()}
                                 class="flex flex-col items-center border-4 border-dotted border-primary-600 bg-primary-950 p-8 transition-colors hover:bg-primary-900">
-                                <Icon icon="upload" class="text-9xl text-primary-400" />
-                                <span class="text-primary-400">Select a shader</span>
+                                <Icon
+                                    icon="upload"
+                                    class="text-9xl text-primary-400"
+                                />
+                                <span class="text-primary-400">
+                                    Select a shader
+                                </span>
                                 {fileUpload}
                             </button>
                         </div>

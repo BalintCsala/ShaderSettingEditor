@@ -25,7 +25,9 @@ export default function ProfileButton(props: Props) {
     };
 
     const changeTooltip = () => {
-        const tooltip = (props.lang.profileDescription ?? "") + (props.lang.profile[props.currentProfileName]?.description ?? "");
+        const tooltip =
+            (props.lang.profileDescription ?? "") +
+            (props.lang.profile[props.currentProfileName]?.description ?? "");
         if (tooltip) {
             props.setTooltip(tooltip);
         } else {
@@ -45,7 +47,9 @@ export default function ProfileButton(props: Props) {
                 profileSettings.forEach(setting => {
                     if (setting.name in props.hiddenOptions) return;
                     if (!(setting.name in optionsCopy)) {
-                        console.warn(`Error while applying profile. ${setting.name} is not a setting`);
+                        console.warn(
+                            `Error while applying profile. ${setting.name} is not a setting`,
+                        );
                         return;
                     }
                     optionsCopy[setting.name].value = setting.value;
@@ -55,7 +59,11 @@ export default function ProfileButton(props: Props) {
                 props.setCurrentProfileName(next);
                 changeTooltip();
             }}>
-            Profile: <ColoredText>{props.lang.profile[props.currentProfileName]?.text || props.currentProfileName}</ColoredText>
+            Profile:{" "}
+            <ColoredText>
+                {props.lang.profile[props.currentProfileName]?.text ||
+                    props.currentProfileName}
+            </ColoredText>
         </Button>
     );
 }

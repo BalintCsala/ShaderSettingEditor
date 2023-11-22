@@ -70,7 +70,10 @@ export async function parseLangFiles(zip: JSZip) {
             .filter(([name]) => name.endsWith(".lang"))
             .map(async ([name, file]) => {
                 const pathParts = name.split(/\\|\//g);
-                const language = pathParts[pathParts.length - 1].replace(".lang", "");
+                const language = pathParts[pathParts.length - 1].replace(
+                    ".lang",
+                    "",
+                );
                 const lang: Lang = {
                     screen: {},
                     option: {},
@@ -83,7 +86,9 @@ export async function parseLangFiles(zip: JSZip) {
                     .map(line => line.trim())
                     .filter(line => line.length > 0 && !line.startsWith("#"))
                     .forEach(line => {
-                        const [path, str] = line.split("=").map(part => part.trim());
+                        const [path, str] = line
+                            .split("=")
+                            .map(part => part.trim());
                         if (path === "profile.comment") {
                             lang.profileDescription = str;
                             return;
@@ -98,8 +103,13 @@ export async function parseLangFiles(zip: JSZip) {
 
                         switch (type) {
                             case "profile": {
-                                const profileLang = createProfileIfUndefined(lang.profile[name]);
-                                if (pathParts[pathParts.length - 1] === "comment") {
+                                const profileLang = createProfileIfUndefined(
+                                    lang.profile[name],
+                                );
+                                if (
+                                    pathParts[pathParts.length - 1] ===
+                                    "comment"
+                                ) {
                                     profileLang.description = str;
                                 } else {
                                     profileLang.text = str;
@@ -108,9 +118,14 @@ export async function parseLangFiles(zip: JSZip) {
                                 break;
                             }
                             case "option": {
-                                const optionLang = createOptionIfUndefined(lang.option[name]);
+                                const optionLang = createOptionIfUndefined(
+                                    lang.option[name],
+                                );
 
-                                if (pathParts[pathParts.length - 1] === "comment") {
+                                if (
+                                    pathParts[pathParts.length - 1] ===
+                                    "comment"
+                                ) {
                                     optionLang.description = str;
                                 } else {
                                     optionLang.text = str;
@@ -120,28 +135,39 @@ export async function parseLangFiles(zip: JSZip) {
                                 break;
                             }
                             case "suffix": {
-                                const optionLang = createOptionIfUndefined(lang.option[name]);
+                                const optionLang = createOptionIfUndefined(
+                                    lang.option[name],
+                                );
                                 optionLang.suffix = str;
                                 lang.option[name] = optionLang;
                                 break;
                             }
                             case "prefix": {
-                                const optionLang = createOptionIfUndefined(lang.option[name]);
+                                const optionLang = createOptionIfUndefined(
+                                    lang.option[name],
+                                );
                                 optionLang.prefix = str;
                                 lang.option[name] = optionLang;
                                 break;
                             }
                             case "value": {
                                 const value = pathParts[2];
-                                const optionLang = createOptionIfUndefined(lang.option[name]);
+                                const optionLang = createOptionIfUndefined(
+                                    lang.option[name],
+                                );
                                 optionLang.values[value] = str;
                                 lang.option[name] = optionLang;
                                 break;
                             }
                             case "screen": {
-                                const screenLang = createScreenIfUndefined(lang.screen[name]);
+                                const screenLang = createScreenIfUndefined(
+                                    lang.screen[name],
+                                );
 
-                                if (pathParts[pathParts.length - 1] === "comment") {
+                                if (
+                                    pathParts[pathParts.length - 1] ===
+                                    "comment"
+                                ) {
                                     screenLang.description = str;
                                 } else {
                                     screenLang.text = str;

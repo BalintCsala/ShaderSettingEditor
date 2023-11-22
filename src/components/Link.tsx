@@ -7,7 +7,9 @@ interface Props {
 
 export default function Link(props: Props) {
     return (
-        <a href={props.url} class="text-purple-600 underline hover:text-purple-700">
+        <a
+            href={props.url}
+            class="text-purple-600 underline hover:text-purple-700">
             {props.children}
         </a>
     );

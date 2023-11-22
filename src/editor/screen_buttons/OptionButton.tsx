@@ -53,18 +53,32 @@ export function OptionButton(props: Props) {
                 index = (index + curr.values.length) % curr.values.length;
                 props.setOptions({
                     ...props.options,
-                    [props.selector.name]: { ...curr, value: curr.values[index] },
+                    [props.selector.name]: {
+                        ...curr,
+                        value: curr.values[index],
+                    },
                 });
             }}>
-            <Show when={option()} fallback={<span>Unknown option: {props.selector.name}</span>}>
+            <Show
+                when={option()}
+                fallback={<span>Unknown option: {props.selector.name}</span>}>
                 {option => (
                     <span>
-                        <ColoredText>{props.lang.option[props.selector.name]?.text || props.selector.name}</ColoredText>
+                        <ColoredText>
+                            {props.lang.option[props.selector.name]?.text ||
+                                props.selector.name}
+                        </ColoredText>
                         <span>: </span>
                         <Switch>
-                            <Match when={option().type === "boolean"}>{option().value ? "Enabled" : "Disabled"}</Match>
+                            <Match when={option().type === "boolean"}>
+                                {option().value ? "Enabled" : "Disabled"}
+                            </Match>
                             <Match when={option().type === "text"}>
-                                <ColoredText>{props.lang.option[props.selector.name]?.values[option().value as string] ?? option().value}</ColoredText>
+                                <ColoredText>
+                                    {props.lang.option[props.selector.name]
+                                        ?.values[option().value as string] ??
+                                        option().value}
+                                </ColoredText>
                             </Match>
                         </Switch>
                     </span>

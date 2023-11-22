@@ -2243,6 +2243,11 @@ interface Props {
 export default function Icon(props: Props) {
     return (
         // eslint-disable-next-line tailwindcss/no-custom-classname
-        <span class={`material-symbols-outlined select-none align-text-top ${props.class ?? ""}`}>{props.icon}</span>
+        <span
+            class={`material-symbols-outlined select-none align-text-top ${
+                props.class ?? ""
+            }`}>
+            {props.icon}
+        </span>
     );
 }
