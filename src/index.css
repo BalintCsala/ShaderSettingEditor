@@ -24,13 +24,12 @@
         @apply text-primary-400;
     }
 
-    .text-shadow {
+    .text-stroke {
         text-shadow:
-            white 1px 1px 0,
-            white -1px 1px 0,
-            white -1px -1px 0,
-            white 1px -1px 0;
-        font-weight: bold;
+            -1px -1px 0 white,
+            1px -1px 0 white,
+            -1px 1px 0 white,
+            1px 1px 0 white;
     }
 }
 
