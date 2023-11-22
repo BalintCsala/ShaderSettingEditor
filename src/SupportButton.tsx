@@ -12,7 +12,7 @@ export default function SupportButton() {
     return (
         <>
             <Button onClick={() => setActive(true)}>
-                <Icon icon="support" class="mr-2" />
+                <Icon icon="attach_money" class="mr-2" />
                 Support the editor
             </Button>
             <Show when={active()}>
