@@ -27,7 +27,7 @@ export default function App() {
                                 onClick={() => fileUpload.click()}
                                 class="flex flex-col items-center border-4 border-dotted border-primary-600 bg-primary-950 p-8 transition-colors hover:bg-primary-900">
                                 <Icon icon="upload" class="text-9xl text-primary-400" />
-                                <span class="text-primary-400">Select a file</span>
+                                <span class="text-primary-400">Select a shader</span>
                                 {fileUpload}
                             </button>
                         </div>
