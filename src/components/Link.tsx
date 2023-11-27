@@ -9,6 +9,7 @@ export default function Link(props: Props) {
     return (
         <a
             href={props.url}
+            target="_blank"
             class="text-purple-600 underline hover:text-purple-700">
             {props.children}
         </a>
