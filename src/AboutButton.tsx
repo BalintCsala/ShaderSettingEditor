@@ -30,7 +30,7 @@ export default function AboutButton() {
                     </p>
                     <p class="my-4 text-primary-400">
                         If you find a bug in the website, report it on my{" "}
-                        <Link url="https://github.com/BalintCsala/ShaderSettingEditor">
+                        <Link url="https://github.com/BalintCsala/ShaderSettingEditor/issues">
                             github page
                         </Link>
                         . If the issue you noticed is related to the generated
