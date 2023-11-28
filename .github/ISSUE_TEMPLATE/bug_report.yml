@@ -15,24 +15,28 @@ body:
       label: Short description of the bug
       description: Describe in a couple of sentences what you expect to happen and what is happening instead.
       placeholder: ex. "Nothing happens when I click the download button when trying to export the settings with the XYZ shaderpack."
+    validations:
       required: true
   - type: textarea
     attributes:
       label: Reproduction steps
       description: Describe the steps to reproduce the bug. If you have any relevant files, please attach them here (do not attach shaderpacks unless its your own).
       placeholder: ex. "1. Open the shaderpack selection menu. 2. Click the download button on the XYZ shaderpack. 3. Nothing happens."
+    validations:
       required: true
   - type: input
     attributes:
       label: Environment details
       description: Describe your environment. This should include your operating system, browser, and browser version.
       placeholder: ex. "Wii U system software, built-in browser, latest version".
+    validations:
       required: true
   - type: input
     attributes:
       label: Shader used
       description: If the bug is related to a specific shaderpack, please specify it here.
       placeholder: ex. "NoShader from Modrinth"
+    validations:
       required: false
   
 
