@@ -21,7 +21,7 @@ body:
     attributes:
       label: Reproduction steps
       description: Describe the steps to reproduce the bug. If you have any relevant files, please attach them here (do not attach shaderpacks unless its your own).
-      placeholder: ex. "1. Open the shaderpack selection menu. 2. Click the download button on the XYZ shaderpack. 3. Nothing happens."
+      placeholder: ex. "1. Select the XYZ shaderpack. 2. Change some config options. 3. Press export settings. 4. Nothing happens"
     validations:
       required: true
   - type: input
