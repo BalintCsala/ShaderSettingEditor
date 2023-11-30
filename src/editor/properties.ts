@@ -104,10 +104,11 @@ function parseProfileSettings(right: string) {
                     value,
                 };
             }
+
             return {
                 type: "booleanSetting" as const,
                 name: element.replace(/!/g, ""),
-                value: element.indexOf("!") !== -1,
+                value: element.indexOf("!") === -1,
             };
         });
 }
