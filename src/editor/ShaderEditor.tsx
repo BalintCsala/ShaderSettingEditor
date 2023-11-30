@@ -15,14 +15,14 @@ import { ColorOptionGroups } from "./properties";
 import Screen from "./screen/Screen";
 
 interface Props {
-    file: File;
+    zipPromise: Promise<JSZip>;
+    fileName: string;
 }
 
 const DEFAULT_TOOLTIP = "";
 
 export default function ShaderEditor(props: Props) {
-    const [zip, setZip] = createSignal<JSZip | null>(null);
-
+    const [loaded, setLoaded] = createSignal(false);
     const [screens, setScreens] = createSignal<Screens>({});
     const [profiles, setProfiles] = createSignal<Profiles>({});
     const [colors, setColors] = createSignal<ColorOptionGroups>({});
@@ -53,7 +53,8 @@ export default function ShaderEditor(props: Props) {
     };
 
     createEffect(() => {
-        JSZip.loadAsync(props.file).then(async zip => {
+        const load = async () => {
+            const zip = await props.zipPromise;
             const entries = Object.entries(zip.files);
             const shadersPropertiesFile =
                 entries.find(([name]) =>
@@ -102,17 +103,18 @@ export default function ShaderEditor(props: Props) {
             });
             setOptions(options);
 
-            setZip(zip);
             setScreenStack(["main"]);
 
             document.body.dataset.special = special;
             document.documentElement.dataset.theme = colorScheme;
-        });
+            setLoaded(true);
+        };
+        load();
     });
 
     return (
         <Show
-            when={zip()}
+            when={loaded()}
             fallback={
                 <div class="flex h-full w-full items-center justify-center">
                     <Spinner />
@@ -168,7 +170,7 @@ export default function ShaderEditor(props: Props) {
                 />
                 <Button
                     class="flex grow basis-1 flex-col items-center md:grow-0 md:flex-row"
-                    onClick={() => exportOptions(options(), props.file.name)}>
+                    onClick={() => exportOptions(options(), props.fileName)}>
                     <Icon
                         class="text-6xl sm:text-3xl md:mr-2"
                         icon="download"

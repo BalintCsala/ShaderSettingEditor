@@ -3,20 +3,64 @@ import AboutButton from "./AboutButton";
 import Icon from "./components/Icon";
 import ShaderEditor from "./editor/ShaderEditor";
 import SupportButton from "./SupportButton";
+import {
+    ProjectionVersionData,
+    fetchProjectData,
+    fetchProjectVersions,
+} from "./modrinth";
+import JSZip from "jszip";
 
 export default function App() {
-    const [file, setFile] = createSignal<File | null>(null);
+    const [zipPromise, setZipPromise] = createSignal<Promise<JSZip> | null>(
+        null,
+    );
+    const [fileName, setFileName] = createSignal("");
     const [fileOver, setFileOver] = createSignal(false);
 
     const fileUpload = (
         <input
-            onChange={e => setFile(e.target.files?.[0] ?? null)}
+            onChange={async e => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setFileName(file.name);
+                setZipPromise(JSZip.loadAsync(file));
+            }}
             class="hidden"
             type="file"
             accept=".zip"
         />
     ) as HTMLInputElement;
 
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has("shader")) {
+        const tryLoadShader = () => {
+            setZipPromise(async () => {
+                const slug = searchParams.get("shader")!;
+                const projectData = await fetchProjectData(slug);
+                if (projectData.project_type !== "shader") {
+                    throw new Error("Not a shader");
+                }
+
+                const versions = await fetchProjectVersions(slug);
+                let version: ProjectionVersionData;
+                if (searchParams.has("version")) {
+                    const versionNumber = searchParams.get("version");
+                    version = versions.find(
+                        v => v.version_number === versionNumber,
+                    )!;
+                } else {
+                    version = versions[0];
+                }
+                const file = version.files.find(file => file.primary)!;
+                console.log(version.version_number);
+
+                const blob = await fetch(file.url).then(r => r.blob());
+                setFileName(file.filename);
+                return await JSZip.loadAsync(blob);
+            });
+        };
+        tryLoadShader();
+    }
     return (
         <div class="flex h-screen w-screen max-w-6xl flex-col items-center p-4 text-4xl">
             <header class="mb-4 flex w-full justify-between text-left">
@@ -34,7 +78,10 @@ export default function App() {
                     const item = e.dataTransfer?.items[0];
                     if (!item || item.kind !== "file") return;
 
-                    setFile(item.getAsFile());
+                    const file = item.getAsFile();
+                    if (!file) return;
+                    setFileName(file.name);
+                    setZipPromise(JSZip.loadAsync(file));
                 }}
                 onDragOver={e => {
                     setFileOver(true);
@@ -43,7 +90,7 @@ export default function App() {
                 onDragLeave={() => setFileOver(false)}
                 class="relative flex w-full grow flex-col overflow-y-hidden border-2 border-primary-600">
                 <Show
-                    when={file()}
+                    when={zipPromise()}
                     fallback={
                         <div class="flex h-full w-full items-center justify-center">
                             <Show
@@ -68,7 +115,12 @@ export default function App() {
                             </Show>
                         </div>
                     }>
-                    {file => <ShaderEditor file={file()} />}
+                    {promise => (
+                        <ShaderEditor
+                            zipPromise={promise()}
+                            fileName={fileName()}
+                        />
+                    )}
                 </Show>
                 <div class="overlay hidden" />
             </main>

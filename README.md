@@ -38,6 +38,24 @@ to refuse the request if I feel it's abusing the system.
 
 Getting around these rules will result in a permanent ban from the service.
 
+### Direct linking
+
+Direct linking lets you link to an editor already initialized with a shader from Modrinth. Use the following link for this:
+
+```
+https://editor.balintcsala.com/?shader=<your shader slug>
+# Optional: Specify the version:
+https://editor.balintcsala.com/?shader=<your shader slug>&version=<version number>
+
+# Example
+https://editor.balintcsala.com/?shader=my_awesome_shader
+https://editor.balintcsala.com/?shader=my_awesome_shader&version=1.0.3
+```
+
+If you don't know your shader slug, go to the main page of your shader on modrinth and copy the last section, e.g. if the link is `modrinth.com/shader/my_awesome_shader` you want `my_awesome_shader`.
+
+This option won't let users download the shader, only export shader settings.
+
 ### App color scheme
 
 Lets you select the colors of the shader editor website. All color schemes are
