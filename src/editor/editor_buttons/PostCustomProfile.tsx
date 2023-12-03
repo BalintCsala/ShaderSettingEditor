@@ -1,6 +1,5 @@
 import {
     AuthProvider,
-    FacebookAuthProvider,
     GithubAuthProvider,
     GoogleAuthProvider,
     signInWithPopup,
@@ -11,12 +10,14 @@ import Button from "../../components/Button";
 import ModalContainer from "../../components/ModalContainer";
 import { auth, db } from "../../firestore";
 
-import FacebookLogo from "../../assets/facebook.svg";
-import GithubLogo from "../../assets/github.svg";
-import GoogleLogo from "../../assets/google.svg";
+// @ts-expect-error This syntax is unsupported by tsc
+import GithubLogo from "../../assets/github.svg?component-solid";
+// @ts-expect-error This syntax is unsupported by tsc
+import GoogleLogo from "../../assets/google.svg?component-solid";
 
 import { addDoc, collection } from "firebase/firestore";
 import { Options } from "../options";
+import Spinner from "../../components/Spinner/Spinner";
 
 interface Props {
     identifier: string;
@@ -33,7 +34,6 @@ enum PostState {
 
 export default function PostCustomProfile(props: Props) {
     const googleProvider = new GoogleAuthProvider();
-    const facebookProvider = new FacebookAuthProvider();
     const githubProvider = new GithubAuthProvider();
 
     const [state, setState] = createSignal(PostState.Inactive);
@@ -41,12 +41,16 @@ export default function PostCustomProfile(props: Props) {
     const [title, setTitle] = createSignal("");
     const [description, setDescription] = createSignal("");
     const [uid, setUID] = createSignal("");
+    const [authenticating, setAuthenticating] = createSignal(false);
 
     const authenticate = (provider: AuthProvider) => {
-        signInWithPopup(auth, provider).then(result => {
-            setUID(result.user.uid);
-            setState(PostState.Disclaimer);
-        });
+        setAuthenticating(true);
+        signInWithPopup(auth, provider)
+            .then(result => {
+                setUID(result.user.uid);
+                setState(PostState.Disclaimer);
+            })
+            .catch(() => setAuthenticating(false));
     };
 
     return (
@@ -79,7 +83,7 @@ export default function PostCustomProfile(props: Props) {
                         <Match when={state() === PostState.Setup}>
                             <div class="flex flex-col items-center gap-2">
                                 <input
-                                    class="w-full bg-primary-950 p-1 text-white"
+                                    class="w-full border-2 border-primary-600 bg-primary-950 p-1 text-white"
                                     type="text"
                                     value={nickname()}
                                     maxLength={20}
@@ -89,7 +93,7 @@ export default function PostCustomProfile(props: Props) {
                                     placeholder="Your nickname (max 20 chars)"
                                 />
                                 <input
-                                    class="w-full bg-primary-950 p-1 text-white"
+                                    class="w-full border-2 border-primary-600 bg-primary-950 p-1 text-white"
                                     type="text"
                                     value={title()}
                                     maxLength={40}
@@ -100,7 +104,7 @@ export default function PostCustomProfile(props: Props) {
                                 />
                                 <textarea
                                     rows={3}
-                                    class="w-full resize-none bg-primary-950 p-1 text-white"
+                                    class="w-full resize-none border-2 border-primary-600 bg-primary-950 p-1 text-white"
                                     value={description()}
                                     maxLength={150}
                                     onInput={e =>
@@ -127,43 +131,37 @@ export default function PostCustomProfile(props: Props) {
                             </div>
                         </Match>
                         <Match when={state() === PostState.Authentication}>
-                            <p class="text-lg text-primary-400">
-                                To post a custom profile, you'll have to
-                                authenticate first. This is handled by Firebase,
-                                we do not ever receive your password and only
-                                store a unique user ID for spam regulation.
-                            </p>
-                            <div class="mt-4 flex flex-row justify-center">
-                                <button
-                                    onClick={() => authenticate(googleProvider)}
-                                    class="m-2">
-                                    <img
-                                        alt="Google login"
-                                        class="h-12 w-12"
-                                        src={GoogleLogo}
-                                    />
-                                </button>
-                                <button
-                                    onClick={() =>
-                                        authenticate(facebookProvider)
-                                    }
-                                    class="m-2">
-                                    <img
-                                        alt="Facebook login"
-                                        class="h-12 w-12"
-                                        src={FacebookLogo}
-                                    />
-                                </button>
-                                <button
-                                    onClick={() => authenticate(githubProvider)}
-                                    class="m-2">
-                                    <img
-                                        alt="Github login"
-                                        class="h-12 w-12"
-                                        src={GithubLogo}
-                                    />
-                                </button>
-                            </div>
+                            <Show
+                                when={!authenticating()}
+                                fallback={
+                                    <div class="flex h-full w-full items-center justify-center">
+                                        <Spinner />
+                                    </div>
+                                }>
+                                <p class="text-lg text-primary-400">
+                                    To post a custom profile, you'll have to
+                                    authenticate first. This is handled by
+                                    Firebase, we do not ever receive your
+                                    password and only store a unique user ID for
+                                    spam regulation.
+                                </p>
+                                <div class="mt-4 flex flex-row justify-center">
+                                    <button
+                                        onClick={() =>
+                                            authenticate(googleProvider)
+                                        }
+                                        class="m-2">
+                                        <GoogleLogo class="h-12 w-12 fill-primary-400" />
+                                    </button>
+                                    <button
+                                        onClick={() =>
+                                            authenticate(githubProvider)
+                                        }
+                                        class="m-2">
+                                        <GithubLogo class="h-12 w-12 fill-primary-400" />
+                                    </button>
+                                </div>
+                            </Show>
                         </Match>
                         <Match when={state() === PostState.Disclaimer}>
                             <p class="mb-4 text-lg text-primary-400">
@@ -172,11 +170,11 @@ export default function PostCustomProfile(props: Props) {
                             </p>
                             <ul class="list-dashed">
                                 <li class="text-lg text-primary-400">
-                                    Neither the content nor your nickname and
-                                    the title and description of your custom
-                                    profile contains any profanity, hate speech
-                                    toward any group or expression of
-                                    controversial opinions.
+                                    Neither the content nor your nickname, the
+                                    title and description of your custom profile
+                                    contains any profanity, hate speech or
+                                    discrimination toward any group or
+                                    expression of controversial opinions.
                                 </li>
                                 <li class="text-lg text-primary-400">
                                     Your submission doesn't circumvent any of
