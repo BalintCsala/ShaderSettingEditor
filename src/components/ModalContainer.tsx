@@ -17,14 +17,13 @@ export default function ModalContainer(props: Props) {
                     class={twMerge(
                         "relative h-min w-[30em] border-2 border-primary-600 bg-gray-950 p-4",
                         props.class,
-                    )}>
+                    )}
+                >
                     <button
                         class="absolute right-2 top-2 text-primary-400"
-                        onClick={() => props.onClose()}>
-                        <Icon
-                            icon="close"
-                            class="text-4xl"
-                        />
+                        onClick={() => props.onClose()}
+                    >
+                        <Icon icon="close" class="text-4xl" />
                     </button>
                     {props.children}
                 </div>

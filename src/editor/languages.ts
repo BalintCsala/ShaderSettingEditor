@@ -83,12 +83,12 @@ export async function parseLangFiles(zip: JSZip) {
 
                 (await file.async("text"))
                     .split("\n")
-                    .map(line => line.trim())
-                    .filter(line => line.length > 0 && !line.startsWith("#"))
-                    .forEach(line => {
+                    .map((line) => line.trim())
+                    .filter((line) => line.length > 0 && !line.startsWith("#"))
+                    .forEach((line) => {
                         const [path, str] = line
                             .split("=")
-                            .map(part => part.trim());
+                            .map((part) => part.trim());
                         if (path === "profile.comment") {
                             lang.profileDescription = str;
                             return;
@@ -203,7 +203,7 @@ export function getDefaultLanguage(langs: Langs) {
     let highestPriority = -Infinity;
 
     Object.keys(langs)
-        .map(lang => ({
+        .map((lang) => ({
             priority: priorities[lang] ?? 0,
             lang,
         }))

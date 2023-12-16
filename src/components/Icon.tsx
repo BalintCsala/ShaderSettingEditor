@@ -2246,7 +2246,8 @@ export default function Icon(props: Props) {
         <span
             class={`material-symbols-outlined select-none align-text-top ${
                 props.class ?? ""
-            }`}>
+            }`}
+        >
             {props.icon}
         </span>
     );

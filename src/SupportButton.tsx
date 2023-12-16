@@ -3,7 +3,8 @@ import Button from "./components/Button";
 import Icon from "./components/Icon";
 import ModalContainer from "./components/ModalContainer";
 
-import PatreonLogo from "./assets/patreon.svg";
+// @ts-expect-error tsc doesn't support this syntax
+import PatreonLogo from "./assets/patreon.svg?component-solid";
 import KofiLogo from "./assets/kofi.png";
 import PaypalLogo from "./assets/paypal.png";
 
@@ -12,10 +13,7 @@ export default function SupportButton() {
     return (
         <>
             <Button onClick={() => setActive(true)}>
-                <Icon
-                    icon="attach_money"
-                    class="mr-2"
-                />
+                <Icon icon="attach_money" class="mr-2" />
                 Support the editor
             </Button>
             <Show when={active()}>
@@ -30,13 +28,10 @@ export default function SupportButton() {
                         <a
                             href="https://patreon.com/balintshaders"
                             target="_blank"
-                            class="w-1/4 border-2 border-primary-600 bg-primary-950 p-2 transition-colors duration-75 hover:bg-primary-900">
+                            class="w-1/4 border-2 border-primary-600 bg-primary-950 p-2 transition-colors duration-75 hover:bg-primary-900"
+                        >
                             <div class="flex flex-col items-center">
-                                <img
-                                    class="h-12"
-                                    src={PatreonLogo}
-                                    alt="Patreon logo"
-                                />
+                                <PatreonLogo class="h-12" />
                                 <span class="text-2xl text-primary-400">
                                     Patreon
                                 </span>
@@ -45,7 +40,8 @@ export default function SupportButton() {
                         <a
                             class="w-1/4 border-2 border-primary-600 bg-primary-950 p-2 transition-colors duration-75 hover:bg-primary-900"
                             href="https://ko-fi.com/balintcsala"
-                            target="_blank">
+                            target="_blank"
+                        >
                             <div class="flex flex-col items-center">
                                 <img
                                     class="h-12"
@@ -60,7 +56,8 @@ export default function SupportButton() {
                         <a
                             class="w-1/4 border-2 border-primary-600 bg-primary-950 p-2 transition-colors duration-75 hover:bg-primary-900"
                             href="https://www.paypal.com/donate/?hosted_button_id=9CJYN7ETGZJPS"
-                            target="_blank">
+                            target="_blank"
+                        >
                             <div class="flex flex-col items-center">
                                 <img
                                     class="h-12"

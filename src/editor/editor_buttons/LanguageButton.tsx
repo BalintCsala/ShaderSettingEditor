@@ -17,11 +17,9 @@ export default function LanguageButton(props: Props) {
         <>
             <Button
                 class="flex grow basis-1 flex-col items-center md:grow-0 md:flex-row"
-                onClick={() => setActive(true)}>
-                <Icon
-                    class="text-6xl sm:text-3xl md:mr-2"
-                    icon="language"
-                />
+                onClick={() => setActive(true)}
+            >
+                <Icon class="text-6xl sm:text-3xl md:mr-2" icon="language" />
                 <span class="hidden whitespace-nowrap sm:inline">
                     {props.currentLangName.toUpperCase()}
                 </span>
@@ -29,7 +27,8 @@ export default function LanguageButton(props: Props) {
             <Show when={active()}>
                 <ModalContainer
                     class="flex h-1/2 flex-col"
-                    onClose={() => setActive(false)}>
+                    onClose={() => setActive(false)}
+                >
                     <span class="mb-2 block w-full text-center text-2xl text-primary-400">
                         Languages
                     </span>
@@ -39,12 +38,13 @@ export default function LanguageButton(props: Props) {
                     </span>
                     <div class="flex grow flex-col gap-2 overflow-y-auto border-2 border-primary-600 p-2">
                         <For each={Object.keys(props.langs)}>
-                            {lang => (
+                            {(lang) => (
                                 <Button
                                     onClick={() => {
                                         setActive(false);
                                         return props.setCurrentLangName(lang);
-                                    }}>
+                                    }}
+                                >
                                     {lang.toUpperCase()}
                                 </Button>
                             )}

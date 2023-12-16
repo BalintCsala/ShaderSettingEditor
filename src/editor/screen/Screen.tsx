@@ -58,6 +58,7 @@ interface Props {
     setTooltip: Setter<string>;
     resetTooltip: () => void;
     setOptions: Setter<Options>;
+    highlight: string;
 }
 
 export default function Screen(props: Props) {
@@ -66,9 +67,10 @@ export default function Screen(props: Props) {
             class="grid gap-2 p-2"
             style={{
                 "grid-template-columns": `repeat(${props.screen.columns}, 1fr)`,
-            }}>
+            }}
+        >
             <For each={props.screen.children}>
-                {element => (
+                {(element) => (
                     <div class="self-stretch">
                         <Switch>
                             <Match when={element.type === "empty"}>
@@ -111,6 +113,7 @@ export default function Screen(props: Props) {
                                             setOptions={props.setOptions}
                                             setTooltip={props.setTooltip}
                                             resetTooltip={props.resetTooltip}
+                                            highlight={props.highlight}
                                             option={
                                                 props.options[
                                                     (element as OptionElement)
@@ -118,13 +121,15 @@ export default function Screen(props: Props) {
                                                 ]
                                             }
                                         />
-                                    }>
+                                    }
+                                >
                                     <SliderOption
                                         lang={props.lang}
                                         setOptions={props.setOptions}
                                         selector={element as OptionElement}
                                         setTooltip={props.setTooltip}
                                         resetTooltip={props.resetTooltip}
+                                        highlight={props.highlight}
                                         option={
                                             props.options[
                                                 (element as OptionElement).name
@@ -140,6 +145,7 @@ export default function Screen(props: Props) {
                                     colorChanger={element as ColorElement}
                                     setTooltip={props.setTooltip}
                                     resetTooltip={props.resetTooltip}
+                                    highlight={props.highlight}
                                     redOption={
                                         props.options[
                                             props.colorGroups[

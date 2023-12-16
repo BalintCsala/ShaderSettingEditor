@@ -8,7 +8,7 @@ import { Match, Show, Switch, createSignal } from "solid-js";
 import Icon from "../../components/Icon";
 import Button from "../../components/Button";
 import ModalContainer from "../../components/ModalContainer";
-import { auth, db } from "../../firestore";
+import { auth, db } from "../../firebase";
 
 // @ts-expect-error This syntax is unsupported by tsc
 import GithubLogo from "../../assets/github.svg?component-solid";
@@ -46,7 +46,7 @@ export default function PostCustomProfile(props: Props) {
     const authenticate = (provider: AuthProvider) => {
         setAuthenticating(true);
         signInWithPopup(auth, provider)
-            .then(result => {
+            .then((result) => {
                 setUID(result.user.uid);
                 setState(PostState.Disclaimer);
             })
@@ -57,11 +57,9 @@ export default function PostCustomProfile(props: Props) {
         <>
             <Button
                 class="flex grow basis-1 flex-col items-center md:grow-0 md:flex-row"
-                onClick={() => setState(PostState.Setup)}>
-                <Icon
-                    icon="upload"
-                    class="text-6xl sm:text-3xl md:mr-2"
-                />
+                onClick={() => setState(PostState.Setup)}
+            >
+                <Icon icon="upload" class="text-6xl sm:text-3xl md:mr-2" />
                 <span class="hidden whitespace-nowrap sm:inline">
                     Upload profile
                 </span>
@@ -70,11 +68,9 @@ export default function PostCustomProfile(props: Props) {
                 <ModalContainer onClose={() => setState(PostState.Inactive)}>
                     <button
                         class="absolute right-2 top-2 text-primary-400"
-                        onClick={() => setState(PostState.Inactive)}>
-                        <Icon
-                            icon="close"
-                            class="text-4xl"
-                        />
+                        onClick={() => setState(PostState.Inactive)}
+                    >
+                        <Icon icon="close" class="text-4xl" />
                     </button>
                     <span class="mb-4 block w-full text-center text-2xl text-primary-400">
                         Post custom profile
@@ -87,7 +83,7 @@ export default function PostCustomProfile(props: Props) {
                                     type="text"
                                     value={nickname()}
                                     maxLength={20}
-                                    onInput={e =>
+                                    onInput={(e) =>
                                         setNickname(e.currentTarget.value)
                                     }
                                     placeholder="Your nickname (max 20 chars)"
@@ -97,7 +93,7 @@ export default function PostCustomProfile(props: Props) {
                                     type="text"
                                     value={title()}
                                     maxLength={40}
-                                    onInput={e =>
+                                    onInput={(e) =>
                                         setTitle(e.currentTarget.value)
                                     }
                                     placeholder="Title (max 40 chars)"
@@ -107,7 +103,7 @@ export default function PostCustomProfile(props: Props) {
                                     class="w-full resize-none border-2 border-primary-600 bg-primary-950 p-1 text-white"
                                     value={description()}
                                     maxLength={150}
-                                    onInput={e =>
+                                    onInput={(e) =>
                                         setDescription(e.currentTarget.value)
                                     }
                                     placeholder="A short description of your profile (max 150 chars)"
@@ -125,7 +121,8 @@ export default function PostCustomProfile(props: Props) {
                                         )
                                             return;
                                         setState(PostState.Authentication);
-                                    }}>
+                                    }}
+                                >
                                     Next
                                 </Button>
                             </div>
@@ -137,7 +134,8 @@ export default function PostCustomProfile(props: Props) {
                                     <div class="flex h-full w-full items-center justify-center">
                                         <Spinner />
                                     </div>
-                                }>
+                                }
+                            >
                                 <p class="text-lg text-primary-400">
                                     To post a custom profile, you'll have to
                                     authenticate first. This is handled by
@@ -150,14 +148,16 @@ export default function PostCustomProfile(props: Props) {
                                         onClick={() =>
                                             authenticate(googleProvider)
                                         }
-                                        class="m-2">
+                                        class="m-2"
+                                    >
                                         <GoogleLogo class="h-12 w-12 fill-primary-400" />
                                     </button>
                                     <button
                                         onClick={() =>
                                             authenticate(githubProvider)
                                         }
-                                        class="m-2">
+                                        class="m-2"
+                                    >
                                         <GithubLogo class="h-12 w-12 fill-primary-400" />
                                     </button>
                                 </div>
@@ -237,7 +237,8 @@ export default function PostCustomProfile(props: Props) {
                                             });
                                             setState(PostState.Success);
                                         })();
-                                    }}>
+                                    }}
+                                >
                                     Accept and post
                                 </Button>
                             </div>
@@ -248,9 +249,8 @@ export default function PostCustomProfile(props: Props) {
                             </p>
                             <div class="flex flex-col items-center">
                                 <Button
-                                    onClick={() =>
-                                        setState(PostState.Inactive)
-                                    }>
+                                    onClick={() => setState(PostState.Inactive)}
+                                >
                                     Close
                                 </Button>
                             </div>

@@ -57,9 +57,9 @@ export default function ProfileButton(props: Props) {
             onClick={() => {
                 const next = nextProfile();
                 const profileSettings = props.profiles[next];
-                props.setOptions(options => {
+                props.setOptions((options) => {
                     const optionsCopy = { ...options };
-                    profileSettings.forEach(setting => {
+                    profileSettings.forEach((setting) => {
                         if (setting.name in props.hiddenOptions) return;
                         if (!(setting.name in optionsCopy)) {
                             console.warn(
@@ -74,7 +74,8 @@ export default function ProfileButton(props: Props) {
 
                 props.setCurrentProfileName(next);
                 changeTooltip();
-            }}>
+            }}
+        >
             Profile:{" "}
             <ColoredText>
                 {props.lang.profile[props.currentProfileName]?.text ||

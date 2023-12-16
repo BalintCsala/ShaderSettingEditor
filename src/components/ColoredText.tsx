@@ -46,14 +46,14 @@ export default function ColoredText(props: Props) {
         setParts(
             props.children
                 .split(/(?=§)|(?<=§.)/g)
-                .map(raw => {
+                .map((raw) => {
                     if (raw.startsWith("§")) {
                         style = { ...style, ...FORMAT_CODES[raw[1]] };
                         return null;
                     }
                     return <span style={{ ...style }}>{raw}</span>;
                 })
-                .filter(part => part !== null) as JSX.Element[],
+                .filter((part) => part !== null) as JSX.Element[],
         );
     });
 

@@ -28,7 +28,7 @@ function parseScreenElements(list: string) {
     return list
         .trim()
         .split(/\s+/g)
-        .map(element => {
+        .map((element) => {
             if (element === "<empty>") {
                 return { type: "empty" as const };
             } else if (element === "<profile>") {
@@ -71,7 +71,7 @@ function parseScreen(
     if (right === "*") {
         return {
             columns: 3,
-            children: Object.keys(parsedOptions).map(name => {
+            children: Object.keys(parsedOptions).map((name) => {
                 return {
                     type: "option",
                     name,
@@ -88,7 +88,7 @@ function parseProfileSettings(right: string) {
     return right
         .trim()
         .split(/\s+/g)
-        .map(element => {
+        .map((element) => {
             if (element.startsWith("profile")) {
                 const name = element.replace("profile.", "");
                 return {
@@ -136,10 +136,10 @@ export function parseProperties(
 
     propertiesFile
         .split("\n")
-        .map(line => line.trim())
-        .filter(line => line.length !== 0)
-        .map(line => {
-            const [left, right] = line.split("=").map(part => part.trim());
+        .map((line) => line.trim())
+        .filter((line) => line.length !== 0)
+        .map((line) => {
+            const [left, right] = line.split("=").map((part) => part.trim());
             const path = left.split(".");
             switch (path[0]) {
                 case "screen": {
@@ -252,9 +252,9 @@ export function parseProperties(
         }
     });
 
-    Object.values(screens).forEach(screen => {
+    Object.values(screens).forEach((screen) => {
         screen.children = screen.children
-            .map(child => {
+            .map((child) => {
                 if (child.type !== "option") return child;
 
                 if (child.name in hiddenOptions) return null;
@@ -273,7 +273,7 @@ export function parseProperties(
                 }
                 return null;
             })
-            .filter(child => child !== null) as ScreenElement[];
+            .filter((child) => child !== null) as ScreenElement[];
     });
 
     for (const profile in profiles) {
@@ -288,7 +288,7 @@ export function parseProperties(
     if (Object.keys(screens).length === 0) {
         screens.main = {
             columns: 3,
-            children: Object.keys(parsedOptions).map(name => {
+            children: Object.keys(parsedOptions).map((name) => {
                 return {
                     type: "option",
                     name,

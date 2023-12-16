@@ -23,11 +23,13 @@ export default function ScreenStack(props: Props) {
                             props.setScreenStack(
                                 props.screenStack.slice(0, index() + 1),
                             )
-                        }>
+                        }
+                    >
                         <Show when={index() != 0}>
                             <svg
                                 viewBox="0 0 55 100"
-                                class="absolute -top-0.5 left-0 h-[calc(100%+0.25rem)]">
+                                class="absolute -top-0.5 left-0 h-[calc(100%+0.25rem)]"
+                            >
                                 <polyline
                                     class="stroke-primary-600"
                                     points="0,0 50,50 0,100"
@@ -45,7 +47,8 @@ export default function ScreenStack(props: Props) {
                         </span>
                         <svg
                             viewBox="0 0 55 100"
-                            class="absolute -top-0.5 left-full h-[calc(100%+0.25rem)]">
+                            class="absolute -top-0.5 left-full h-[calc(100%+0.25rem)]"
+                        >
                             <polyline
                                 class="stroke-primary-600"
                                 points="0,0 50,50 0,100"

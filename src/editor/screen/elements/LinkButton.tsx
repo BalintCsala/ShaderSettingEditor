@@ -24,11 +24,12 @@ export default function LinkButton(props: Props) {
             onBlur={() => props.resetTooltip()}
             class="h-full w-full"
             onClick={() => {
-                props.setScreenStack(prevScreenStack => [
+                props.setScreenStack((prevScreenStack) => [
                     ...prevScreenStack,
                     props.link.name,
                 ]);
-            }}>
+            }}
+        >
             <ColoredText>
                 {props.lang.screen[props.link.name]?.text || props.link.name}
             </ColoredText>

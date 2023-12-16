@@ -1,6 +1,6 @@
 import { createEffect, createSignal, onCleanup } from "solid-js";
 
-interface Color {
+export interface Color {
     red: number;
     green: number;
     blue: number;
@@ -63,7 +63,7 @@ export default function ColorSelector(props: Props) {
     const canvas = (
         <canvas
             class="border-2 border-white"
-            onMouseDown={e => {
+            onMouseDown={(e) => {
                 setMainActive(true);
                 handleSelection(e, canvas);
             }}
@@ -72,7 +72,7 @@ export default function ColorSelector(props: Props) {
     const barCanvas = (
         <canvas
             class="border-2 border-white"
-            onMouseDown={e => {
+            onMouseDown={(e) => {
                 setBarActive(true);
                 handleSelection(e, barCanvas);
             }}
@@ -200,9 +200,7 @@ export default function ColorSelector(props: Props) {
     });
 
     return (
-        <div
-            class={props.class}
-            onClick={e => e.stopImmediatePropagation()}>
+        <div class={props.class} onClick={(e) => e.stopImmediatePropagation()}>
             <div class="flex gap-4">
                 {canvas}
                 {barCanvas}

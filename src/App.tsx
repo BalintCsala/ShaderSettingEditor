@@ -19,7 +19,7 @@ export default function App() {
 
     const fileUpload = (
         <input
-            onChange={async e => {
+            onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
                 setFileName(file.name);
@@ -46,15 +46,15 @@ export default function App() {
                 if (searchParams.has("version")) {
                     const versionNumber = searchParams.get("version");
                     version = versions.find(
-                        v => v.version_number === versionNumber,
+                        (v) => v.version_number === versionNumber,
                     )!;
                 } else {
                     version = versions[0];
                 }
-                const file = version.files.find(file => file.primary)!;
+                const file = version.files.find((file) => file.primary)!;
                 console.log(version.version_number);
 
-                const blob = await fetch(file.url).then(r => r.blob());
+                const blob = await fetch(file.url).then((r) => r.blob());
                 setFileName(file.filename);
                 return await JSZip.loadAsync(blob);
             });
@@ -73,7 +73,7 @@ export default function App() {
                 </div>
             </header>
             <main
-                onDrop={e => {
+                onDrop={(e) => {
                     e.preventDefault();
                     const item = e.dataTransfer?.items[0];
                     if (!item || item.kind !== "file") return;
@@ -83,12 +83,13 @@ export default function App() {
                     setFileName(file.name);
                     setZipPromise(JSZip.loadAsync(file));
                 }}
-                onDragOver={e => {
+                onDragOver={(e) => {
                     setFileOver(true);
                     e.preventDefault();
                 }}
                 onDragLeave={() => setFileOver(false)}
-                class="relative flex w-full grow flex-col overflow-y-hidden border-2 border-primary-600">
+                class="relative flex w-full grow flex-col gap-2 overflow-y-hidden border-2 border-primary-600 p-2"
+            >
                 <Show
                     when={zipPromise()}
                     fallback={
@@ -99,10 +100,12 @@ export default function App() {
                                     <div class="pointer-events-none text-primary-400">
                                         Release to upload
                                     </div>
-                                }>
+                                }
+                            >
                                 <button
                                     onClick={() => fileUpload.click()}
-                                    class="flex flex-col items-center border-4 border-dotted border-primary-600 bg-primary-950 p-8 transition-colors hover:bg-primary-900">
+                                    class="flex flex-col items-center border-4 border-dotted border-primary-600 bg-primary-950 p-8 transition-colors hover:bg-primary-900"
+                                >
                                     <Icon
                                         icon="upload"
                                         class="text-9xl text-primary-400"
@@ -114,8 +117,9 @@ export default function App() {
                                 </button>
                             </Show>
                         </div>
-                    }>
-                    {promise => (
+                    }
+                >
+                    {(promise) => (
                         <ShaderEditor
                             zipPromise={promise()}
                             fileName={fileName()}

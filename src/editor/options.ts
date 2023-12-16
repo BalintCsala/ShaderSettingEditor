@@ -63,7 +63,7 @@ function parseOption(line: string): { name: string; option: Option } | null {
             .substring(2)
             .trim()
             .split(/\/\//)
-            .map(part => part.trim());
+            .map((part) => part.trim());
         const [, name] = head.replace("//", "").trim().split(/\s+/g);
 
         return {
@@ -77,7 +77,7 @@ function parseOption(line: string): { name: string; option: Option } | null {
         };
     }
 
-    const [head, details] = line.split(/\/\//).map(part => part.trim());
+    const [head, details] = line.split(/\/\//).map((part) => part.trim());
     if (head.includes("(")) return null;
 
     if (line.startsWith("const")) {
@@ -176,7 +176,7 @@ export async function parseOptions(zip: JSZip) {
     await Promise.all(
         files.map(async ([, file]) => {
             const content = await file.async("text");
-            content.split("\n").forEach(line => {
+            content.split("\n").forEach((line) => {
                 line = line.trim();
 
                 if (line.includes("#if")) {
@@ -205,7 +205,8 @@ export async function parseOptions(zip: JSZip) {
         if (!option.uncertain) return;
         const found =
             compileTimeCheckLines.findIndex(
-                line => line.includes(" " + name) || line.includes("(" + name),
+                (line) =>
+                    line.includes(" " + name) || line.includes("(" + name),
             ) !== -1;
         if (found) {
             return;

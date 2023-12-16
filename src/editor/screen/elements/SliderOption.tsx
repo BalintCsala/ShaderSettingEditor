@@ -1,8 +1,8 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Setter, Show } from "solid-js";
+import { twMerge } from "tailwind-merge";
+import { Lang } from "../../languages";
 import { Options, TextOption } from "../../options";
 import { OptionElement } from "../Screen";
-import { Lang } from "../../languages";
-import { Setter } from "solid-js";
 
 interface Props {
     lang: Lang;
@@ -11,6 +11,7 @@ interface Props {
     setOptions: Setter<Options>;
     setTooltip: Setter<string>;
     resetTooltip: () => void;
+    highlight: string;
 }
 
 export default function SliderOption(props: Props) {
@@ -19,7 +20,7 @@ export default function SliderOption(props: Props) {
     const selectedIndex = () => {
         const opt = props.option;
         return opt.values
-            .map(x => parseFloat(x).toFixed(5))
+            .map((x) => parseFloat(x).toFixed(5))
             .indexOf(parseFloat(opt.value).toFixed(5));
     };
     const percentage = () =>
@@ -30,7 +31,7 @@ export default function SliderOption(props: Props) {
     ) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const perc = (e.clientX - rect.x) / rect.width;
-        props.setOptions(options => ({
+        props.setOptions((options) => ({
             ...options,
             [props.selector.name]: {
                 ...props.option,
@@ -48,9 +49,15 @@ export default function SliderOption(props: Props) {
                 <div class="group relative flex h-full w-full items-center justify-center border-2 border-primary-600 bg-primary-950 p-2">
                     <span>Unknown option: {props.selector.name}</span>
                 </div>
-            }>
+            }
+        >
             <div
-                class="group relative flex h-full w-full items-center justify-center border-2 border-primary-600 bg-primary-950 p-2"
+                class={twMerge(
+                    "group relative flex h-full w-full items-center justify-center border-2 border-primary-600 bg-primary-950 p-2",
+                    props.selector.name === props.highlight
+                        ? "border-primary-200 bg-primary-800 text-primary-100"
+                        : "",
+                )}
                 onMouseEnter={() => {
                     const tooltip =
                         props.lang.option[props.selector.name]?.description;
@@ -61,15 +68,16 @@ export default function SliderOption(props: Props) {
                     setDragging(false);
                 }}
                 onBlur={() => props.resetTooltip()}
-                onMouseDown={e => {
+                onMouseDown={(e) => {
                     setDragging(true);
                     handleSelect(e);
                 }}
                 onMouseUp={() => setDragging(false)}
-                onMouseMove={e => {
+                onMouseMove={(e) => {
                     if (!dragging()) return;
                     handleSelect(e);
-                }}>
+                }}
+            >
                 <span class="select-none text-lg text-primary-400 group-hover:hidden">
                     {props.lang.option[props.selector.name]?.text ||
                         props.selector.name}
@@ -83,7 +91,8 @@ export default function SliderOption(props: Props) {
                 <div class="absolute left-0 right-2 top-0 hidden h-full group-hover:block">
                     <div
                         class="absolute z-10 h-full w-2 select-none bg-primary-600 transition-all duration-75"
-                        style={{ left: `${percentage()}%` }}>
+                        style={{ left: `${percentage()}%` }}
+                    >
                         <span class="pointer-events-none absolute top-full border-2 border-primary-800 bg-primary-950 p-2 text-lg text-primary-400">
                             {props.lang.option[props.selector.name]?.values[
                                 props.option.value

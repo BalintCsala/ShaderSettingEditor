@@ -13,6 +13,7 @@ import { Options, parseOptions } from "./options";
 import { Profiles, Screens, parseProperties } from "./properties";
 import { ColorOptionGroups } from "./properties";
 import Screen from "./screen/Screen";
+import SearchField from "./SearchField";
 
 interface Props {
     zipPromise: Promise<JSZip>;
@@ -44,13 +45,7 @@ export default function ShaderEditor(props: Props) {
     const currentScreenName = () => screenStack()[screenStack().length - 1];
     const currentScreen = () => screens()[currentScreenName()];
     const currentLang = () => langs()[currentLangName()];
-
-    const setOptionsAndResetProfile = (
-        options: Options | ((prev: Options) => Options),
-    ) => {
-        setOptions(options);
-        setCurrentProfileName("Custom");
-    };
+    const [highlight, setHighlight] = createSignal("");
 
     createEffect(() => {
         const load = async () => {
@@ -112,6 +107,37 @@ export default function ShaderEditor(props: Props) {
         load();
     });
 
+    const setOptionsAndResetProfile = (
+        options: Options | ((prev: Options) => Options),
+    ) => {
+        setOptions(options);
+        setCurrentProfileName("Custom");
+    };
+
+    const selectProfile = (profile: {
+        [key: string]: string;
+        title: string;
+        description: string;
+        nickname: string;
+    }): void => {
+        const copy = { ...options() };
+        for (const key in copy) {
+            if (key in profile) {
+                switch (copy[key].type) {
+                    case "boolean": {
+                        copy[key].value = profile[key] === "true";
+                        break;
+                    }
+                    case "text": {
+                        copy[key].value = profile[key];
+                        break;
+                    }
+                }
+            }
+        }
+        setScreenStack(["main"]);
+        setCurrentProfileName(profile.title);
+    };
     return (
         <Show
             when={loaded()}
@@ -119,28 +145,33 @@ export default function ShaderEditor(props: Props) {
                 <div class="flex h-full w-full items-center justify-center">
                     <Spinner />
                 </div>
-            }>
-            <div class="flex justify-between p-2">
+            }
+        >
+            <div class="flex justify-between">
                 <ScreenStack
                     lang={currentLang()}
                     screenStack={screenStack()}
                     setScreenStack={setScreenStack}
                 />
-
                 <Show when={screenStack().length > 1}>
                     <Button
                         onClick={() =>
                             setScreenStack(screenStack().slice(0, -1))
-                        }>
-                        <Icon
-                            class="mr-2"
-                            icon="arrow_back"
-                        />
+                        }
+                    >
+                        <Icon class="mr-2" icon="arrow_back" />
                         Back
                     </Button>
                 </Show>
             </div>
-            <div class="m-2 h-3/5 overflow-y-auto border-2 border-primary-600">
+            <SearchField
+                lang={currentLang()}
+                options={options()}
+                screens={screens()}
+                setScreenStack={setScreenStack}
+                setHighlight={setHighlight}
+            />
+            <div class="h-3/5 overflow-y-auto border-2 border-primary-600">
                 <Screen
                     colorGroups={colors()}
                     currentProfileName={currentProfileName()}
@@ -155,11 +186,12 @@ export default function ShaderEditor(props: Props) {
                     setScreenStack={setScreenStack}
                     setTooltip={setTooltip}
                     sliders={sliders()}
+                    highlight={highlight()}
                 />
             </div>
-            <div class="m-2 mb-0 grow border-2 border-primary-600 p-2 text-lg text-primary-400">
+            <div class="mb-0 grow border-2 border-primary-600 p-2 text-lg text-primary-400">
                 <For each={tooltip().split(/(?<=\.)\s/g)}>
-                    {part => <p>{part}</p>}
+                    {(part) => <p>{part}</p>}
                 </For>
             </div>
             <div class="flex justify-center gap-2 p-2">
@@ -170,7 +202,8 @@ export default function ShaderEditor(props: Props) {
                 />
                 <Button
                     class="flex grow basis-1 flex-col items-center md:grow-0 md:flex-row"
-                    onClick={() => exportOptions(options(), props.fileName)}>
+                    onClick={() => exportOptions(options(), props.fileName)}
+                >
                     <Icon
                         class="text-6xl sm:text-3xl md:mr-2"
                         icon="download"
@@ -180,31 +213,11 @@ export default function ShaderEditor(props: Props) {
                     </span>
                 </Button>
                 <Show when={identifier()}>
-                    {identifier => (
+                    {(identifier) => (
                         <>
                             <CustomProfiles
                                 identifier={identifier()}
-                                selectProfile={profile => {
-                                    const copy = { ...options() };
-                                    for (const key in copy) {
-                                        if (key in profile) {
-                                            switch (copy[key].type) {
-                                                case "boolean": {
-                                                    copy[key].value =
-                                                        profile[key] === "true";
-                                                    break;
-                                                }
-                                                case "text": {
-                                                    copy[key].value =
-                                                        profile[key];
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    setScreenStack(["main"]);
-                                    setCurrentProfileName(profile.title);
-                                }}
+                                selectProfile={selectProfile}
                             />
                             <PostCustomProfile
                                 identifier={identifier()}

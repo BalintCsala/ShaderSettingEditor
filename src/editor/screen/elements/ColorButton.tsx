@@ -1,8 +1,9 @@
 import { Setter, Show, createSignal } from "solid-js";
-import ColorSelector from "../../../components/ColorSelector";
+import ColorSelector, { Color } from "../../../components/ColorSelector";
 import { Lang } from "../../languages";
 import { Options, TextOption } from "../../options";
 import { ColorElement } from "../Screen";
+import { twMerge } from "tailwind-merge";
 
 export interface ColorOptionGroup {
     red: string;
@@ -20,6 +21,7 @@ interface Props {
     resetTooltip: () => void;
     setOptions: Setter<Options>;
     setTooltip: Setter<string>;
+    highlight: string;
 }
 
 export default function ColorButton(props: Props) {
@@ -29,7 +31,7 @@ export default function ColorButton(props: Props) {
         parseFloat(props[`${comp}Option`].value as string);
 
     const getColor = () =>
-        `rgb(${(["red", "green", "blue"] as const).map(c =>
+        `rgb(${(["red", "green", "blue"] as const).map((c) =>
             Math.round(getComponent(c) * 255),
         )})`;
 
@@ -39,9 +41,31 @@ export default function ColorButton(props: Props) {
         document.removeEventListener("click", clickOutside);
     };
 
+    const onColorChange = (color: Color): void => {
+        props.setOptions((options) => ({
+            ...options,
+            [props.colorGroup.red]: {
+                ...props.redOption,
+                value: color.red.toString(),
+            },
+            [props.colorGroup.green]: {
+                ...props.greenOption,
+                value: color.green.toString(),
+            },
+            [props.colorGroup.blue]: {
+                ...props.blueOption,
+                value: color.blue.toString(),
+            },
+        }));
+    };
     return (
         <button
-            class="relative flex h-full w-full cursor-pointer justify-center border-2 border-primary-600 p-2 text-lg"
+            class={twMerge(
+                "relative flex h-full w-full cursor-pointer justify-center border-2 border-primary-600 p-2 text-lg",
+                props.highlight === props.colorChanger.name
+                    ? "border-primary-200 bg-primary-800 text-primary-100"
+                    : "",
+            )}
             onMouseEnter={() => {
                 const tooltip =
                     props.lang.option[props.colorChanger.name]?.description;
@@ -55,7 +79,8 @@ export default function ColorButton(props: Props) {
             }}
             style={{
                 background: getColor(),
-            }}>
+            }}
+        >
             <Show when={active()}>
                 <ColorSelector
                     color={{
@@ -64,23 +89,7 @@ export default function ColorButton(props: Props) {
                         blue: getComponent("blue"),
                     }}
                     class="absolute -right-0.5 top-full z-10 border-2 border-primary-600 bg-gray-900 p-4"
-                    onChange={color => {
-                        props.setOptions(options => ({
-                            ...options,
-                            [props.colorGroup.red]: {
-                                ...props.redOption,
-                                value: color.red.toString(),
-                            },
-                            [props.colorGroup.green]: {
-                                ...props.greenOption,
-                                value: color.green.toString(),
-                            },
-                            [props.colorGroup.blue]: {
-                                ...props.blueOption,
-                                value: color.blue.toString(),
-                            },
-                        }));
-                    }}
+                    onChange={onColorChange}
                 />
             </Show>
             <span class="text-stroke pointer-events-none select-none font-bold text-black shadow-red-600 drop-shadow-lg">
