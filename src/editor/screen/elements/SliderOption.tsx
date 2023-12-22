@@ -1,4 +1,4 @@
-import { createSignal, Setter, Show } from "solid-js";
+import { createSignal, onCleanup, Setter, Show } from "solid-js";
 import { twMerge } from "tailwind-merge";
 import { Lang } from "../../languages";
 import { Options, TextOption } from "../../options";
@@ -35,18 +35,14 @@ export default function SliderOption(props: Props) {
     const percentage = () => {
         const rangeData = range();
         if (!rangeData) {
-            return Math.floor(
-                (selectedIndex() / (props.option.values.length - 1)) * 100,
-            );
+            return selectedIndex() / (props.option.values.length - 1);
         }
 
-        return Math.floor(
-            getPercentageWithGrowth(
-                rangeData.growth,
-                rangeData.min,
-                rangeData.max,
-                parseFloat(props.option.value),
-            ) * 100,
+        return getPercentageWithGrowth(
+            rangeData.growth,
+            rangeData.min,
+            rangeData.max,
+            parseFloat(props.option.value),
         );
     };
 
@@ -105,7 +101,7 @@ export default function SliderOption(props: Props) {
             />
             <div
                 class={twMerge(
-                    "absolute left-0 right-2 top-0 hidden h-full group-hover:block",
+                    "absolute left-0 right-0 top-0 hidden h-full group-hover:block",
                     currentlyDragging() !== "" ? "group-hover:hidden" : "",
                     currentlyDragging() === props.selector.name
                         ? "group-hover:block block"
@@ -113,10 +109,13 @@ export default function SliderOption(props: Props) {
                 )}
             >
                 <div
-                    class="absolute z-10 h-full w-2 select-none bg-primary-600 transition-all duration-75"
-                    style={{ left: `${percentage()}%` }}
+                    class="pointer-events-none absolute flex items-center whitespace-nowrap transition-all"
+                    style={{ left: `${percentage() * 100}%` }}
                 >
-                    <span class="pointer-events-none absolute top-full whitespace-nowrap border-2 border-primary-800 bg-primary-950 p-2 text-lg text-primary-400">
+                    <span
+                        class="relative select-none border-2 border-primary-800 bg-primary-950 p-2 text-lg text-primary-400"
+                        style={{ right: `${percentage() * 100}%` }}
+                    >
                         <ColoredText>
                             {props.lang.option[props.selector.name]?.values[
                                 props.option.value
@@ -164,19 +163,25 @@ export default function SliderOption(props: Props) {
         }));
     };
 
-    window.addEventListener("mouseup", () => {
+    const releaseListener = () => {
         if (currentlyDragging() === props.selector.name) {
             setCurrentlyDragging("");
         }
-    });
-    window.addEventListener("blur", () => {
-        if (currentlyDragging() === props.selector.name) {
-            setCurrentlyDragging("");
-        }
-    });
-    window.addEventListener("mousemove", (e) => {
+    };
+
+    const moveListener = (e: MouseEvent): void => {
         if (currentlyDragging() !== props.selector.name) return;
         handleSelect(e);
+    };
+
+    window.addEventListener("mouseup", releaseListener);
+    window.addEventListener("blur", releaseListener);
+    window.addEventListener("mousemove", moveListener);
+
+    onCleanup(() => {
+        window.removeEventListener("mouseup", releaseListener);
+        window.removeEventListener("blur", releaseListener);
+        window.removeEventListener("mousemove", moveListener);
     });
 
     return (

@@ -65,7 +65,7 @@ interface Props {
 export default function Screen(props: Props) {
     return (
         <div
-            class="grid gap-2 p-2"
+            class="grid gap-2 overflow-x-hidden p-2"
             style={{
                 "grid-template-columns": `repeat(${props.screen.columns}, 1fr)`,
             }}
