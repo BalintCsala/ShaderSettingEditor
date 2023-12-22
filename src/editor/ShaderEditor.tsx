@@ -14,6 +14,7 @@ import { Profiles, Ranges, Screens, parseProperties } from "./properties";
 import { ColorOptionGroups } from "./properties";
 import Screen from "./screen/Screen";
 import SearchField from "./SearchField";
+import ColoredText from "../components/ColoredText";
 
 interface Props {
     zipPromise: Promise<JSZip>;
@@ -195,7 +196,11 @@ export default function ShaderEditor(props: Props) {
             </div>
             <div class="mb-0 grow border-2 border-primary-600 p-2 text-lg text-primary-400">
                 <For each={tooltip().split(/(?<=\.)\s/g)}>
-                    {(part) => <p>{part}</p>}
+                    {(part) => (
+                        <p>
+                            <ColoredText>{part}</ColoredText>
+                        </p>
+                    )}
                 </For>
             </div>
             <div class="flex justify-center gap-2 p-2">

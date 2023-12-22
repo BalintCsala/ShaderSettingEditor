@@ -1,6 +1,7 @@
 import { For, Show } from "solid-js";
 import { Lang } from "./languages";
 import { Setter } from "solid-js";
+import ColoredText from "../components/ColoredText";
 
 interface Props {
     screenStack: string[];
@@ -40,10 +41,12 @@ export default function ScreenStack(props: Props) {
                             </svg>
                         </Show>
                         <span class="text-lg text-primary-400">
-                            {index() < props.screenStack.length - 3
-                                ? "..."
-                                : props.lang.screen[screenName]?.text ||
-                                  screenName}
+                            <ColoredText>
+                                {index() < props.screenStack.length - 3
+                                    ? "..."
+                                    : props.lang.screen[screenName]?.text ||
+                                      screenName}
+                            </ColoredText>
                         </span>
                         <svg
                             viewBox="0 0 55 100"

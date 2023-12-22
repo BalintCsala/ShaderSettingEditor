@@ -105,8 +105,8 @@ function parseProfileSettings(right: string) {
                     name,
                 };
             }
-            if (element.indexOf(":") !== -1) {
-                const [name, value] = element.split(":");
+            if (element.match(/[=:]/)) {
+                const [name, value] = element.split(/[=:]/);
                 return {
                     type: "textSetting" as const,
                     name,
@@ -149,8 +149,9 @@ export function parseProperties(
         .map((line) => line.trim())
         .filter((line) => line.length !== 0)
         .map((line) => {
-            const [left, right] = line.split("=").map((part) => part.trim());
-            const path = left.split(".");
+            const [left, ...rest] = line.split("=");
+            const right = rest.join("=").trim();
+            const path = left.trim().split(".");
             switch (path[0]) {
                 case "screen": {
                     const name = path[1] ?? "main";

@@ -31,11 +31,12 @@ interface Props {
 }
 
 export default function ProfileButton(props: Props) {
-    const nextProfile = () => {
+    const nextProfile = (offset: number) => {
         const curr = props.currentProfileName;
         const names = Object.keys(props.profiles);
         const currIndex = names.indexOf(curr);
-        return names[(currIndex + 1) % names.length];
+        const nextIndex = (currIndex + offset + names.length) % names.length;
+        return names[nextIndex];
     };
 
     const changeTooltip = () => {
@@ -48,33 +49,36 @@ export default function ProfileButton(props: Props) {
             props.resetTooltip();
         }
     };
+    const clickHandler = (e: MouseEvent) => {
+        e.preventDefault();
+        const next = nextProfile(e.button === 0 ? 1 : -1);
+        const profileSettings = props.profiles[next];
+        props.setOptions((options) => {
+            const optionsCopy = { ...options };
+            profileSettings.forEach((setting) => {
+                if (setting.name in props.hiddenOptions) return;
+                if (!(setting.name in optionsCopy)) {
+                    console.warn(
+                        `Error while applying profile. ${setting.name} is not a setting`,
+                    );
+                    return;
+                }
+                optionsCopy[setting.name].value = setting.value;
+            });
+            return optionsCopy;
+        });
+
+        props.setCurrentProfileName(next);
+        changeTooltip();
+    };
+
     return (
         <Button
             onMouseEnter={changeTooltip}
             onMouseLeave={() => props.resetTooltip()}
             onBlur={() => props.resetTooltip()}
             class="h-full w-full"
-            onClick={() => {
-                const next = nextProfile();
-                const profileSettings = props.profiles[next];
-                props.setOptions((options) => {
-                    const optionsCopy = { ...options };
-                    profileSettings.forEach((setting) => {
-                        if (setting.name in props.hiddenOptions) return;
-                        if (!(setting.name in optionsCopy)) {
-                            console.warn(
-                                `Error while applying profile. ${setting.name} is not a setting`,
-                            );
-                            return;
-                        }
-                        optionsCopy[setting.name].value = setting.value;
-                    });
-                    return optionsCopy;
-                });
-
-                props.setCurrentProfileName(next);
-                changeTooltip();
-            }}
+            onClick={clickHandler}
         >
             Profile:{" "}
             <ColoredText>

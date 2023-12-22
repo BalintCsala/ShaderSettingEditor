@@ -44,7 +44,7 @@ export default function ColoredText(props: Props) {
     createEffect(() => {
         let style: Style = {};
         setParts(
-            props.children
+            (props.children + "")
                 .split(/(?=§)|(?<=§.)/g)
                 .map((raw) => {
                     if (raw.startsWith("§")) {
@@ -57,5 +57,5 @@ export default function ColoredText(props: Props) {
         );
     });
 
-    return <>{parts}</>;
+    return <>{parts()}</>;
 }
