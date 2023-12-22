@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge";
 import { Lang } from "../../languages";
 import { Options, TextOption } from "../../options";
 import { OptionElement } from "../Screen";
+import { Ranges } from "../../properties";
+import { getPercentageWithGrowth, interpolateWithGrowth } from "../../growth";
 
 interface Props {
     lang: Lang;
@@ -12,6 +14,7 @@ interface Props {
     setTooltip: Setter<string>;
     resetTooltip: () => void;
     highlight: string;
+    ranges: Ranges;
 }
 
 export default function SliderOption(props: Props) {
@@ -23,14 +26,53 @@ export default function SliderOption(props: Props) {
             .map((x) => parseFloat(x).toFixed(5))
             .indexOf(parseFloat(opt.value).toFixed(5));
     };
-    const percentage = () =>
-        Math.floor((selectedIndex() / (props.option.values.length - 1)) * 100);
+
+    const range = () => {
+        return props.ranges[props.selector.name];
+    };
+
+    const percentage = () => {
+        const rangeData = range();
+        if (!rangeData) {
+            return Math.floor(
+                (selectedIndex() / (props.option.values.length - 1)) * 100,
+            );
+        }
+
+        return Math.floor(
+            getPercentageWithGrowth(
+                rangeData.growth,
+                rangeData.min,
+                rangeData.max,
+                parseFloat(props.option.value),
+            ) * 100,
+        );
+    };
 
     const handleSelect = (
         e: MouseEvent & { currentTarget: HTMLDivElement },
     ) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const perc = (e.clientX - rect.x) / rect.width;
+
+        if (props.selector.name in props.ranges) {
+            const rangeData = range();
+            props.setOptions((options) => ({
+                ...options,
+                [props.selector.name]: {
+                    ...props.option,
+                    value: interpolateWithGrowth(
+                        rangeData.growth,
+                        rangeData.min,
+                        rangeData.max,
+                        rangeData.step,
+                        perc,
+                    ).toString(),
+                },
+            }));
+            return;
+        }
+
         props.setOptions((options) => ({
             ...options,
             [props.selector.name]: {

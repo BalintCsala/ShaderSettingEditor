@@ -1,7 +1,7 @@
 import { For, Match, Setter, Show, Switch } from "solid-js";
 import { Lang } from "../languages";
 import { Options, TextOption } from "../options";
-import { Profiles } from "../properties";
+import { Profiles, Ranges } from "../properties";
 import { ColorOptionGroups } from "../properties";
 import ColorButton from "./elements/ColorButton";
 import LinkButton from "./elements/LinkButton";
@@ -59,6 +59,7 @@ interface Props {
     resetTooltip: () => void;
     setOptions: Setter<Options>;
     highlight: string;
+    ranges: Ranges;
 }
 
 export default function Screen(props: Props) {
@@ -130,6 +131,7 @@ export default function Screen(props: Props) {
                                         setTooltip={props.setTooltip}
                                         resetTooltip={props.resetTooltip}
                                         highlight={props.highlight}
+                                        ranges={props.ranges}
                                         option={
                                             props.options[
                                                 (element as OptionElement).name

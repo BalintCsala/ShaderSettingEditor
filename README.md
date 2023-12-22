@@ -11,7 +11,7 @@ following:
 Make sure to set this if you want your shader to participate in the custom
 profile system.
 
-```
+```bash
 extra.identifier = <Your unique identifier>
 
 # Example (please don't actually name it like this):
@@ -43,7 +43,7 @@ Getting around these rules will result in a permanent ban from the service.
 Direct linking lets you link to an editor already initialized with a shader from
 Modrinth. Use the following link for this:
 
-```
+```bash
 https://editor.balintcsala.com/?shader=<your shader slug>
 # Optional: Specify the version:
 https://editor.balintcsala.com/?shader=<your shader slug>&version=<version number>
@@ -92,7 +92,7 @@ sliders for the green and blue components will be removed from every screen they
 are part of and the red slider will be replaced by the color selector. The
 selector assumes a range of [0, 1] on all three sliders.
 
-```
+```perl
 extra.colors.<New option name> = <Red option name> <Green option name> <Blue option name>
 
 # Example:
@@ -101,7 +101,7 @@ extra.colors.SKY_COLOR = SKY_COLOR_R SKY_COLOR_G SKY_COLOR_B
 
 #### Language support
 
-```
+```perl
 # shaders/lang/en_us.lang
 option.SKY_COLOR = Sky color
 option.SKY_COLOR.comment = The color of the sky.
@@ -138,7 +138,7 @@ The options are removed before converting them to color selectors.
 This is for the sake of backwards compatibility. If an option is redundant with
 the extra settings, you can lock it to a constant value and hide it.
 
-```
+```r
 extra.hidden.<Option to lock and hide> = <Value to set the option to>
 
 # Example:
@@ -153,8 +153,8 @@ This setting lets you insert settings in the middle of screens if you want
 something to show up you wouldn't show on the regular optifine editor (E.g.
 color selectors).
 
-```
-extra.append.<Screen name>.<Index to append to> = <List of options to append>
+```r
+extra.append.<Screen name>.<Index to append after> = <List of options to append>
 
 # Example:
 extra.append.MY_SCREEN.2 = OPTION <empty>
@@ -167,6 +167,53 @@ surrounded with parentheses:
 extra.append.COLORS.2 = (SKY_COLOR)
 ```
 
+### Range override
+
+This option lets developers create user-friendly ranges (options with possible
+values between two endpoints) easier. This should be considered even if you want
+to keep built-in editor support, because it lets you tweak the exact behaviour
+of the slider.
+
+```perl
+# Minimum value of the slider
+# Required
+extra.range.<Option name>.min = <Minimum value>
+
+# Maximum value of the slider
+# Required
+extra.range.<Option name>.max = <Maximum value>
+
+# Distance between allowed values, e.g. with a step of 0.1 and a min of 1 the values would be 1, 1.1, 1.2, etc.
+# Optional, default: 0.0001
+extra.range.<Option name>.step = <Distance>
+
+# Mapping between slider percentage and output value.
+# Optional, default: linear.
+# One of: log, square_root, linear, quadratic, exponential
+#    caveat: quadratic and exponential don't work with negative values
+extra.range.<Option name>.growth = <Growth function type>
+
+# Example
+extra.range.SUN_BRIGHTNESS.min = 1
+extra.range.SUN_BRIGTHNESS.max = 10000
+extra.range.SUN_BRIGHTNESS.step = 1
+extra.range.SUN_BRIGHTNESS.growth = exponential
+```
+
+Mapping is done by interpolating in the inverse range, e.g. for exponential to
+interpolate between 1 and 10000 it would interpolate linearly between
+`log(1) = 0` and `log(10000) ≈ 9.2103`, then running the result through the
+growth function. E.g. for the same example putting the slider in the middle
+would yield
+
+If an option has an associated range declaration, but isn't in the sliders array, it will be implicitly added to it. This is only a normalization step however, don't rely on it.
+
+```
+exp((1 - 0.5) * log(1) + 0.5 * log(10000)) = exp(4.60517...) = 100
+```
+
+The requirement for inverting the growth function first is the reason the quadratic and exponential growth functions don't work for negative values.
+
 ### Dynamically disabled options
 
 > This setting is currently non-functional and only here for future reference.
@@ -174,7 +221,7 @@ extra.append.COLORS.2 = (SKY_COLOR)
 This option lets you disable or enable settings based on the value of other
 boolean settings.
 
-```
+```r
 extra.enabled.<Option to enable/disable> = <Equation using other options>
 
 # Example:
@@ -186,7 +233,7 @@ precedence), other boolean options and equality and inequality checks with
 options (consider `OPTION == 2` and similar a single token). Options can be
 negated with the `!` operator, but larger equations can't.
 
-```
+```r
 # OK
 extra.enabled.RT_STEPS = RT_TYPE == 2 && !RT_DISABLED
 
@@ -201,7 +248,7 @@ extra.enabled.RT_STEPS = RT_TYPE == 2 || !RT_DISABLED
 A new `disabled` setting can be specified for options, this will show up as a
 tooltip when the user hovers over the disabled setting.
 
-```
+```r
 # shaders/lang/en_us.lang
 option.RT_STEPS.disabled = This settings needs the ray tracing type to be SSR and raytracing to be enabled.
 ```

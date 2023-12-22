@@ -10,7 +10,7 @@ import PostCustomProfile from "./editor_buttons/PostCustomProfile";
 import { exportOptions } from "./export";
 import { EMPTY_LANGS, getDefaultLanguage, parseLangFiles } from "./languages";
 import { Options, parseOptions } from "./options";
-import { Profiles, Screens, parseProperties } from "./properties";
+import { Profiles, Ranges, Screens, parseProperties } from "./properties";
 import { ColorOptionGroups } from "./properties";
 import Screen from "./screen/Screen";
 import SearchField from "./SearchField";
@@ -35,6 +35,7 @@ export default function ShaderEditor(props: Props) {
     const [hiddenOptions, setHiddenOptions] = createSignal<{
         [key: string]: string;
     }>({});
+    const [ranges, setRanges] = createSignal<Ranges>({});
 
     const [identifier, setIdentifier] = createSignal<string | null>(null);
     const resetTooltip = () => setTooltip(DEFAULT_TOOLTIP);
@@ -71,6 +72,7 @@ export default function ShaderEditor(props: Props) {
                 hiddenOptions,
                 identifier,
                 colorScheme,
+                ranges,
             } = parseProperties(shadersProperties, options);
             const langs = await parseLangFiles(zip);
 
@@ -82,6 +84,7 @@ export default function ShaderEditor(props: Props) {
             setCurrentLangName(getDefaultLanguage(langs));
             setHiddenOptions(hiddenOptions);
             setIdentifier(identifier);
+            setRanges(ranges);
 
             Object.entries(hiddenOptions).forEach(([name, value]) => {
                 const option = options[name];
@@ -187,6 +190,7 @@ export default function ShaderEditor(props: Props) {
                     setTooltip={setTooltip}
                     sliders={sliders()}
                     highlight={highlight()}
+                    ranges={ranges()}
                 />
             </div>
             <div class="mb-0 grow border-2 border-primary-600 p-2 text-lg text-primary-400">

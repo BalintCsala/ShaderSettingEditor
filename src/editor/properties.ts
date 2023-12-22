@@ -1,12 +1,21 @@
+import { GrowthType } from "./growth";
 import { Options } from "./options";
 import { ScreenElement } from "./screen/Screen";
 import { ScreenData } from "./screen/Screen";
 import { ColorOptionGroup } from "./screen/elements/ColorButton";
 import { Setting } from "./screen/elements/ProfileButton";
 
+export interface Range {
+    min: number;
+    max: number;
+    step: number;
+    growth: GrowthType;
+}
+
 export type Screens = { [key: string]: ScreenData };
 export type Profiles = { [key: string]: Setting[] };
 export type ColorOptionGroups = { [key: string]: ColorOptionGroup };
+export type Ranges = { [key: string]: Range };
 
 export interface CopyProfile {
     type: "copyProfile";
@@ -125,6 +134,7 @@ export function parseProperties(
     let special = "";
     let colorScheme = "emerald";
     let identifier: string | null = null;
+    const ranges: Ranges = {};
     const hiddenOptions: { [key: string]: string } = {};
     const appends: { screenName: string; index: number; options: string }[] =
         [];
@@ -156,7 +166,7 @@ export function parseProperties(
                     break;
                 }
                 case "sliders": {
-                    sliders = right.split(/\s+/g);
+                    sliders = [...sliders, ...right.split(/\s+/g)];
                     break;
                 }
                 case "extra": {
@@ -213,6 +223,31 @@ export function parseProperties(
                                 index,
                                 options: right,
                             });
+                            break;
+                        }
+                        case "range": {
+                            const option = path[2];
+                            if (!(option in ranges)) {
+                                ranges[option] = {
+                                    min: -1,
+                                    max: -1,
+                                    step: 0.0001,
+                                    growth: GrowthType.Linear,
+                                };
+                            }
+                            if (!sliders.includes(option)) {
+                                sliders.push(option);
+                            }
+                            switch (path[3]) {
+                                case "min":
+                                case "max":
+                                case "step":
+                                    ranges[option][path[3]] = parseFloat(right);
+                                    break;
+                                case "growth":
+                                    ranges[option][path[3]] =
+                                        right as GrowthType;
+                            }
                             break;
                         }
                         case "special": {
@@ -306,5 +341,6 @@ export function parseProperties(
         hiddenOptions,
         identifier,
         colorScheme,
+        ranges,
     };
 }
