@@ -93,7 +93,9 @@ export default function ColorButton(props: Props) {
         }));
     };
 
-    const selectorReferencePoint = (<div />) as HTMLDivElement;
+    const selectorReferencePoint = (
+        <div class="absolute -left-0.5 top-full" />
+    ) as HTMLDivElement;
 
     return (
         <button
@@ -130,12 +132,12 @@ export default function ColorButton(props: Props) {
                         class="absolute z-10 border-2 border-primary-600 bg-gray-900 p-4"
                         /* -right-0.5 top-full */
                         style={{
-                            top: `calc(${
+                            top: `${
                                 selectorReferencePoint.getBoundingClientRect().y
-                            }px + 2.25rem)`,
-                            left: `calc(${
+                            }px`,
+                            left: `${
                                 selectorReferencePoint.getBoundingClientRect().x
-                            }px - 4.15rem)`,
+                            }px`,
                         }}
                         onChange={onColorChange}
                     />
