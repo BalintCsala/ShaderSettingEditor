@@ -4,6 +4,7 @@ import { Lang } from "../../languages";
 import { Options, TextOption } from "../../options";
 import { ColorElement } from "../Screen";
 import { twMerge } from "tailwind-merge";
+import { Portal } from "solid-js/web";
 
 export type ColorOptionGroup = {
     format: "separate" | "separate_255" | "combined" | "combined_255";
@@ -91,6 +92,9 @@ export default function ColorButton(props: Props) {
             },
         }));
     };
+
+    const selectorReferencePoint = (<div />) as HTMLDivElement;
+
     return (
         <button
             class={twMerge(
@@ -115,15 +119,27 @@ export default function ColorButton(props: Props) {
             }}
         >
             <Show when={active()}>
-                <ColorSelector
-                    color={{
-                        red: getComponent("red"),
-                        green: getComponent("green"),
-                        blue: getComponent("blue"),
-                    }}
-                    class="absolute -right-0.5 top-full z-10 border-2 border-primary-600 bg-gray-900 p-4"
-                    onChange={onColorChange}
-                />
+                {selectorReferencePoint}
+                <Portal>
+                    <ColorSelector
+                        color={{
+                            red: getComponent("red"),
+                            green: getComponent("green"),
+                            blue: getComponent("blue"),
+                        }}
+                        class="absolute z-10 border-2 border-primary-600 bg-gray-900 p-4"
+                        /* -right-0.5 top-full */
+                        style={{
+                            top: `calc(${
+                                selectorReferencePoint.getBoundingClientRect().y
+                            }px + 2.25rem)`,
+                            left: `calc(${
+                                selectorReferencePoint.getBoundingClientRect().x
+                            }px - 4.15rem)`,
+                        }}
+                        onChange={onColorChange}
+                    />
+                </Portal>
             </Show>
             <span class="text-stroke pointer-events-none select-none font-bold text-black shadow-red-600 drop-shadow-lg">
                 {props.lang.option[props.colorChanger.name]?.text ||

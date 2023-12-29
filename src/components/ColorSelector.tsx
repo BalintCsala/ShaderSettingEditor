@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onCleanup } from "solid-js";
+import { JSX, createEffect, createSignal, onCleanup } from "solid-js";
 
 export interface Color {
     red: number;
@@ -10,6 +10,7 @@ interface Props {
     color: Color;
     onChange: (color: Color) => void;
     class?: string;
+    style?: JSX.CSSProperties;
 }
 
 function rgbToHsv(color: Color) {
@@ -200,11 +201,17 @@ export default function ColorSelector(props: Props) {
     });
 
     return (
-        <div class={props.class} onClick={(e) => e.stopImmediatePropagation()}>
-            <div class="flex gap-4">
-                {canvas}
-                {barCanvas}
+        <>
+            <div
+                class={props.class}
+                style={props.style}
+                onClick={(e) => e.stopImmediatePropagation()}
+            >
+                <div class="flex gap-4">
+                    {canvas}
+                    {barCanvas}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
