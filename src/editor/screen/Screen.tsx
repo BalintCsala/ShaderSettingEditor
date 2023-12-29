@@ -152,21 +152,28 @@ export default function Screen(props: Props) {
                                         props.options[
                                             props.colorGroups[
                                                 (element as ColorElement).name
-                                            ].red
+                                            ].red ?? ""
                                         ] as TextOption
                                     }
                                     greenOption={
                                         props.options[
                                             props.colorGroups[
                                                 (element as ColorElement).name
-                                            ].green
+                                            ].green ?? ""
                                         ] as TextOption
                                     }
                                     blueOption={
                                         props.options[
                                             props.colorGroups[
                                                 (element as ColorElement).name
-                                            ].blue
+                                            ].blue ?? ""
+                                        ] as TextOption
+                                    }
+                                    colorOption={
+                                        props.options[
+                                            props.colorGroups[
+                                                (element as ColorElement).name
+                                            ].color ?? ""
                                         ] as TextOption
                                     }
                                     colorGroup={

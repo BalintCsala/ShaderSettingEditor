@@ -122,6 +122,43 @@ function parseProfileSettings(right: string) {
         });
 }
 
+function parseColorOption(
+    path: string[],
+    value: string,
+    option: ColorOptionGroup,
+    colorReplaceMap: Map<string, string | null>,
+) {
+    const name = path[2];
+    if (path.length === 4 && path[3] === "format") {
+        if (
+            value !== "separate" &&
+            value !== "separate_255" &&
+            value !== "combined" &&
+            value !== "combined_255"
+        ) {
+            console.warn(`Incorrect color format for ${name}`);
+            return option;
+        }
+        option.format = value;
+        return option;
+    }
+    const rightParts = value.split(/\s+/g);
+    if (rightParts.length === 1) {
+        option.color = value;
+        colorReplaceMap.set(value, name);
+    } else if (rightParts.length === 3) {
+        const [red, green, blue] = rightParts;
+        option = { ...option, red, green, blue };
+        colorReplaceMap.set(red, name);
+        colorReplaceMap.set(green, null);
+        colorReplaceMap.set(blue, null);
+    } else {
+        console.warn(`Incorrect color definition for ${name}`);
+        return option;
+    }
+    return option;
+}
+
 export function parseProperties(
     propertiesFile: string,
     parsedOptions: Options,
@@ -186,11 +223,16 @@ export function parseProperties(
                         }
                         case "colors": {
                             const name = path[2];
-                            const [red, green, blue] = right.split(/\s+/g);
-                            colors[name] = { red, green, blue };
-                            colorReplaceMap.set(red, name);
-                            colorReplaceMap.set(green, null);
-                            colorReplaceMap.set(blue, null);
+                            const option = colors[name] ?? {
+                                format: "separate",
+                            };
+                            colors[name] = parseColorOption(
+                                path,
+                                right,
+                                option,
+                                colorReplaceMap,
+                            );
+                            option;
                             break;
                         }
                         case "hidden": {
@@ -261,6 +303,31 @@ export function parseProperties(
             }
         });
 
+    // Validate colors
+    Object.entries(colors).forEach(([name, color]) => {
+        if (color.red === undefined && color.color === undefined) {
+            console.warn(`Option values for ${name} are not defined`);
+            delete colors[name];
+            return;
+        }
+        if (
+            (color.format === "separate" || color.format === "separate_255") &&
+            color.red === undefined
+        ) {
+            console.warn(`Color format doesn't match for ${name}`);
+            delete colors[name];
+            return;
+        }
+        if (
+            (color.format === "combined" || color.format === "combined_255") &&
+            color.color === undefined
+        ) {
+            console.warn(`Color format doesn't match for ${name}`);
+            delete colors[name];
+            return;
+        }
+    });
+
     Object.entries(removeEmptyAfter).forEach(([screenName, options]) => {
         const screen = screens[screenName];
 
@@ -288,26 +355,22 @@ export function parseProperties(
         }
     });
 
+    // Replace the components of color options
     Object.values(screens).forEach((screen) => {
         screen.children = screen.children
             .map((child) => {
                 if (child.type !== "option") return child;
 
                 if (child.name in hiddenOptions) return null;
-
                 if (!colorReplaceMap.has(child.name)) return child;
 
                 const replaceBy = colorReplaceMap.get(child.name)!;
-                if (replaceBy === null) return replaceBy;
+                if (replaceBy === null) return null;
 
-                const color = colors[replaceBy];
-                if (child.name === color.red) {
-                    return {
-                        type: "color",
-                        name: replaceBy,
-                    };
-                }
-                return null;
+                return {
+                    type: "color",
+                    name: replaceBy,
+                };
             })
             .filter((child) => child !== null) as ScreenElement[];
     });

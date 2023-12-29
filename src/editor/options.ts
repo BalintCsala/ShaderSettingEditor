@@ -78,7 +78,11 @@ function parseOption(line: string): { name: string; option: Option } | null {
     }
 
     const [head, details] = line.split(/\/\//).map((part) => part.trim());
-    if (head.includes("(")) return null;
+
+    if (head.includes("(") && !head.includes("COLOR")) {
+        // Cull options if they include a paren but aren't colors
+        return null;
+    }
 
     if (line.startsWith("const")) {
         // Const option
@@ -112,7 +116,8 @@ function parseOption(line: string): { name: string; option: Option } | null {
         };
     }
 
-    const [, name, value] = head.split(/\s+/g);
+    const [, name, ...rawValue] = head.split(/\s+/g);
+    const value = rawValue ? rawValue.join(" ") : null;
     if (!value) {
         // Boolean option, default on
         return {
@@ -128,7 +133,6 @@ function parseOption(line: string): { name: string; option: Option } | null {
 
     if (!details) {
         // I dub thee the Sasha setting
-
         return {
             name,
             option: {

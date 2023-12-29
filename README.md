@@ -93,11 +93,30 @@ are part of and the red slider will be replaced by the color selector. The
 selector assumes a range of [0, 1] on all three sliders.
 
 ```perl
+# Color format
+# Optional, default: separate
+# One of:
+#   - separate - Separate R, G and B variables given as a float in the range [0, 1]
+#   - separate_255 - Separate R, G and B variables given as an integer in the range [0, 255] (value will still have a trailing .0)
+#   - combined - Single color variable given as a vec3 with values in the [0, 1] range
+#   - combined_255 - Single color variables given as integers in the [0, 255] range 
+# The combined options should only be chosen when you don't want built-in editor compatibility
+extra.colors.<New option name>.format = <Format>
+
+# Definition
+#   format is separate or separate_255
 extra.colors.<New option name> = <Red option name> <Green option name> <Blue option name>
+#   format is vec3 or vec3_255, new option name can be the same as the option it replaces
+extra.colors.<New option name> = <Color option name>
 
 # Example:
 extra.colors.SKY_COLOR = SKY_COLOR_R SKY_COLOR_G SKY_COLOR_B
+
+extra.colors.SUN_COLOR.format = combined
+extra.colors.SUN_COLOR = SUN_COLOR
 ```
+
+Caveat: If the format is `combined` or `combined_255` the name of the variable must include `COLOR` to make it distinguishable from regular defines because of the `*` screen element type.
 
 #### Language support
 

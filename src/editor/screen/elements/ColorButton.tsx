@@ -5,19 +5,22 @@ import { Options, TextOption } from "../../options";
 import { ColorElement } from "../Screen";
 import { twMerge } from "tailwind-merge";
 
-export interface ColorOptionGroup {
-    red: string;
-    blue: string;
-    green: string;
-}
+export type ColorOptionGroup = {
+    format: "separate" | "separate_255" | "combined" | "combined_255";
+    red?: string;
+    blue?: string;
+    green?: string;
+    color?: string;
+};
 
 interface Props {
     lang: Lang;
     colorChanger: ColorElement;
     colorGroup: ColorOptionGroup;
-    redOption: TextOption;
-    greenOption: TextOption;
-    blueOption: TextOption;
+    redOption?: TextOption;
+    greenOption?: TextOption;
+    blueOption?: TextOption;
+    colorOption?: TextOption;
     resetTooltip: () => void;
     setOptions: Setter<Options>;
     setTooltip: Setter<string>;
@@ -27,8 +30,20 @@ interface Props {
 export default function ColorButton(props: Props) {
     const [active, setActive] = createSignal(false);
 
-    const getComponent = (comp: "red" | "green" | "blue") =>
-        parseFloat(props[`${comp}Option`].value as string);
+    const getComponent = (comp: "red" | "green" | "blue") => {
+        const scaler = props.colorGroup.format.endsWith("255") ? 255 : 1;
+        if (props.colorGroup.format.startsWith("combined")) {
+            const values = props
+                .colorOption!.value.replace("vec3(", "")
+                .replace(")", "")
+                .split(",");
+            return (
+                parseFloat(values[["red", "green", "blue"].indexOf(comp)]) /
+                scaler
+            );
+        }
+        return parseFloat(props[`${comp}Option`]!.value as string) / scaler;
+    };
 
     const getColor = () =>
         `rgb(${(["red", "green", "blue"] as const).map((c) =>
@@ -42,19 +57,37 @@ export default function ColorButton(props: Props) {
     };
 
     const onColorChange = (color: Color): void => {
+        const scaler = props.colorGroup.format.endsWith("255") ? 255 : 1;
+        if (
+            props.colorGroup.format === "combined" ||
+            props.colorGroup.format === "combined_255"
+        ) {
+            props.setOptions((options) => ({
+                ...options,
+                [props.colorGroup.color!]: {
+                    ...props.colorOption!,
+                    value: `vec3(${[
+                        color.red * scaler,
+                        color.green * scaler,
+                        color.blue * scaler,
+                    ]})`,
+                },
+            }));
+            return;
+        }
         props.setOptions((options) => ({
             ...options,
-            [props.colorGroup.red]: {
-                ...props.redOption,
-                value: color.red.toString(),
+            [props.colorGroup.red!]: {
+                ...props.redOption!,
+                value: (color.red * scaler).toString(),
             },
-            [props.colorGroup.green]: {
-                ...props.greenOption,
-                value: color.green.toString(),
+            [props.colorGroup.green!]: {
+                ...props.greenOption!,
+                value: (color.green * scaler).toString(),
             },
-            [props.colorGroup.blue]: {
-                ...props.blueOption,
-                value: color.blue.toString(),
+            [props.colorGroup.blue!]: {
+                ...props.blueOption!,
+                value: (color.blue * scaler).toString(),
             },
         }));
     };
