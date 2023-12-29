@@ -79,15 +79,15 @@ export default function ColorButton(props: Props) {
             ...options,
             [props.colorGroup.red!]: {
                 ...props.redOption!,
-                value: (color.red * scaler).toFixed(15),
+                value: (color.red * scaler).toString(),
             },
             [props.colorGroup.green!]: {
                 ...props.greenOption!,
-                value: (color.green * scaler).toFixed(15),
+                value: (color.green * scaler).toString(),
             },
             [props.colorGroup.blue!]: {
                 ...props.blueOption!,
-                value: (color.blue * scaler).toFixed(15),
+                value: (color.blue * scaler).toString(),
             },
         }));
     };
