@@ -116,6 +116,12 @@ extra.colors.SUN_COLOR.format = combined
 extra.colors.SUN_COLOR = SUN_COLOR
 ```
 
+For combined values the shader code should look something like this:
+```glsl
+// The comment is required
+#define MY_COLOR vec3(0.5, 0.6, 0.7) // My color
+```
+
 Caveat: If the format is `combined` or `combined_255` the name of the variable must include `COLOR` to make it distinguishable from regular defines because of the `*` screen element type.
 
 #### Language support
