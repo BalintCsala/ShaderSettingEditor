@@ -9,6 +9,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@solidjs/router": "^0.10.6",
         "firebase": "^10.6.0",
         "jszip": "^3.10.1",
         "solid-js": "^1.8.5",
