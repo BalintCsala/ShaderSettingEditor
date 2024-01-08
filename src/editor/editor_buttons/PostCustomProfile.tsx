@@ -2,11 +2,12 @@ import {
     AuthProvider,
     GithubAuthProvider,
     GoogleAuthProvider,
+    signInWithCustomToken,
     signInWithPopup,
 } from "firebase/auth";
 import { Match, Show, Switch, createSignal } from "solid-js";
-import Icon from "../../components/Icon";
 import Button from "../../components/Button";
+import Icon from "../../components/Icon";
 import ModalContainer from "../../components/ModalContainer";
 import { auth, db } from "../../firebase";
 
@@ -18,8 +19,8 @@ import GoogleLogo from "../../assets/google.svg?component-solid";
 import ModrinthLogo from "../../assets/modrinth.svg?component-solid";
 
 import { addDoc, collection } from "firebase/firestore";
-import { Options } from "../options";
 import Spinner from "../../components/Spinner/Spinner";
+import { Options } from "../options";
 
 interface Props {
     identifier: string;
@@ -67,14 +68,16 @@ export default function PostCustomProfile(props: Props) {
         );
 
         const handler = (e: MessageEvent) => {
-            if (!e.data.uid) {
+            if (!e.data.token) {
                 return;
             }
-            setUID(e.data.uid);
             popup?.close();
             window.removeEventListener("message", handler);
-            setState(PostState.Disclaimer);
-            setAuthenticating(false);
+            signInWithCustomToken(auth, e.data.token).then((result) => {
+                setUID(result.user.uid);
+                setState(PostState.Disclaimer);
+                setAuthenticating(false);
+            });
         };
 
         window.addEventListener("message", handler);

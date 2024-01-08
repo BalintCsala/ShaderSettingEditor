@@ -4,10 +4,10 @@ export default function Auth() {
     const searchParams = new URLSearchParams(window.location.search);
     const error = searchParams.get("error");
     const description = searchParams.get("description");
-    const uid = searchParams.get("uid");
+    const token = searchParams.get("token");
 
-    if (uid) {
-        window.opener.postMessage({ uid });
+    if (token) {
+        window.opener.postMessage({ token });
     }
 
     return (
