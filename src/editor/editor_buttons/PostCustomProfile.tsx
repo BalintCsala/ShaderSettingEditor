@@ -14,6 +14,8 @@ import { auth, db } from "../../firebase";
 import GithubLogo from "../../assets/github.svg?component-solid";
 // @ts-expect-error This syntax is unsupported by tsc
 import GoogleLogo from "../../assets/google.svg?component-solid";
+// @ts-expect-error This syntax is unsupported by tsc
+import ModrinthLogo from "../../assets/modrinth.svg?component-solid";
 
 import { addDoc, collection } from "firebase/firestore";
 import { Options } from "../options";
@@ -51,6 +53,31 @@ export default function PostCustomProfile(props: Props) {
                 setState(PostState.Disclaimer);
             })
             .catch(() => setAuthenticating(false));
+    };
+
+    const authenticateModrinth = () => {
+        setAuthenticating(true);
+        const clientID = import.meta.env.VITE_MODRINTH_CLIENT_ID as string;
+        const redirectURI = import.meta.env.VITE_AUTH_REDIRECT_URI;
+        const modrinthAuthURL = `https://modrinth.com/auth/authorize?client_id=${clientID}&redirect_uri=${redirectURI}&scope=USER_READ`;
+        const popup = window.open(
+            modrinthAuthURL,
+            "_blank",
+            "popup=yes,width=600,height=600",
+        );
+
+        const handler = (e: MessageEvent) => {
+            if (!e.data.uid) {
+                return;
+            }
+            setUID(e.data.uid);
+            popup?.close();
+            window.removeEventListener("message", handler);
+            setState(PostState.Disclaimer);
+            setAuthenticating(false);
+        };
+
+        window.addEventListener("message", handler);
     };
 
     return (
@@ -148,7 +175,7 @@ export default function PostCustomProfile(props: Props) {
                                         onClick={() =>
                                             authenticate(googleProvider)
                                         }
-                                        class="m-2"
+                                        class="m-2 transition-all hover:scale-125"
                                     >
                                         <GoogleLogo class="h-12 w-12 fill-primary-400" />
                                     </button>
@@ -156,9 +183,15 @@ export default function PostCustomProfile(props: Props) {
                                         onClick={() =>
                                             authenticate(githubProvider)
                                         }
-                                        class="m-2"
+                                        class="m-2 transition-all hover:scale-125"
                                     >
                                         <GithubLogo class="h-12 w-12 fill-primary-400" />
+                                    </button>
+                                    <button
+                                        onClick={() => authenticateModrinth()}
+                                        class="m-2 transition-all hover:scale-125"
+                                    >
+                                        <ModrinthLogo class="h-12 w-12 fill-primary-400" />
                                     </button>
                                 </div>
                             </Show>

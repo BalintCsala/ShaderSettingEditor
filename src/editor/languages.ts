@@ -96,7 +96,10 @@ export async function parseLangFiles(zip: JSZip) {
                         const pathParts = path.split(".");
 
                         if (pathParts.length < 2) {
-                            throw `Failed to parse language setting: ${line}`;
+                            console.error(
+                                `Failed to parse language setting: ${line}`,
+                            );
+                            return;
                         }
 
                         const [type, name] = pathParts;

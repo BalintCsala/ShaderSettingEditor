@@ -12,7 +12,7 @@ render(
     () => (
         <Router>
             <Route path="/" component={App} />
-            <Route path="/auth/callback" component={Auth} />
+            <Route path="/auth" component={Auth} />
         </Router>
     ),
     root!,
