@@ -25,19 +25,21 @@ export default function AboutButton() {
                     </p>
                     <p class="my-4 text-primary-400">
                         You can share the generated setting files (the .txt
-                        ones), but the edited shaders (when you export custom
-                        profiles) are still under copyright.
+                        ones) without any legal issues.
+                    </p>
+                    <p class="my-4 text-primary-400">
+                        If you don't know where to start with a given shader and
+                        the profile browser is enabled (if you see a button
+                        titled "Browse profiles" it is), you can check out the
+                        profiles other people made. You can even edit them and
+                        post the result online as well.
                     </p>
                     <p class="my-4 text-primary-400">
                         If you find a bug in the website, report it on my{" "}
                         <Link url="https://github.com/BalintCsala/ShaderSettingEditor/issues">
                             github page
                         </Link>
-                        . If the issue you noticed is related to the generated
-                        setting file or shader, make sure it's actually coming
-                        from this site. A good (but still imperfect) rule of
-                        thumb is if the unedited shader gets loaded into the
-                        game successfully, but the edited one doesn't.
+                        .
                     </p>
                     <p class="mt-4 text-primary-400">Contacts:</p>
                     <ul class="list-dashed">

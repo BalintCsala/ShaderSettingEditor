@@ -90,7 +90,7 @@ export default function PostCustomProfile(props: Props) {
                 onClick={() => setState(PostState.Setup)}
             >
                 <Icon icon="upload" class="text-6xl sm:text-3xl md:mr-2" />
-                <span class="hidden whitespace-nowrap sm:inline">
+                <span class="whitespace-normal sm:inline md:whitespace-nowrap">
                     Upload profile
                 </span>
             </Button>
@@ -168,10 +168,11 @@ export default function PostCustomProfile(props: Props) {
                             >
                                 <p class="text-lg text-primary-400">
                                     To post a custom profile, you'll have to
-                                    authenticate first. This is handled by
-                                    Firebase, we do not ever receive your
-                                    password and only store a unique user ID for
-                                    spam regulation.
+                                    authenticate first. This is handled by the
+                                    respective providers, we do not ever receive
+                                    your password and only store a unique user
+                                    ID for spam regulation. If you want to
+                                    delete this information, contact us.
                                 </p>
                                 <div class="mt-4 flex flex-row justify-center">
                                     <button
@@ -201,7 +202,7 @@ export default function PostCustomProfile(props: Props) {
                         </Match>
                         <Match when={state() === PostState.Disclaimer}>
                             <p class="mb-4 text-lg text-primary-400">
-                                by using this service you agree to the following
+                                By using this service you agree to the following
                                 rules:
                             </p>
                             <ul class="list-dashed">
@@ -222,6 +223,11 @@ export default function PostCustomProfile(props: Props) {
                                 be removed and you will be permanently banned
                                 from the service. We keep the right to the final
                                 say on what counts as rule-breaking.
+                            </p>
+                            <p class="my-4 text-lg text-primary-400">
+                                By posting a custom profile you agree releasing
+                                it in the public domain. Anybody will be able to
+                                use, modify and share it for free.
                             </p>
                             <div class="flex flex-col items-center">
                                 <Button

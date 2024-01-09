@@ -203,7 +203,7 @@ export default function ShaderEditor(props: Props) {
                     )}
                 </For>
             </div>
-            <div class="flex justify-center gap-2 p-2">
+            <div class="flex justify-center gap-2">
                 <LanguageButton
                     currentLangName={currentLangName()}
                     langs={langs()}
@@ -217,7 +217,7 @@ export default function ShaderEditor(props: Props) {
                         class="text-6xl sm:text-3xl md:mr-2"
                         icon="download"
                     />
-                    <span class="hidden whitespace-nowrap sm:inline">
+                    <span class="whitespace-normal sm:inline md:whitespace-nowrap">
                         Export settings
                     </span>
                 </Button>

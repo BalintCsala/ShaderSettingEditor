@@ -20,7 +20,7 @@ export default function LanguageButton(props: Props) {
                 onClick={() => setActive(true)}
             >
                 <Icon class="text-6xl sm:text-3xl md:mr-2" icon="language" />
-                <span class="hidden whitespace-nowrap sm:inline">
+                <span class="whitespace-normal sm:inline md:whitespace-nowrap">
                     {props.currentLangName.toUpperCase()}
                 </span>
             </Button>

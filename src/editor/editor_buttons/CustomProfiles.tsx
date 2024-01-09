@@ -79,7 +79,7 @@ export default function CustomProfiles(props: Props) {
                 onClick={() => setActive(true)}
             >
                 <Icon class="text-6xl sm:text-3xl md:mr-2" icon="public" />
-                <span class="hidden whitespace-nowrap text-primary-400 sm:inline">
+                <span class="whitespace-normal text-primary-400 sm:inline md:whitespace-nowrap">
                     Browse profiles
                 </span>
             </Button>
