@@ -32,7 +32,7 @@ export default function LanguageButton(props: Props) {
                     <span class="mb-2 block w-full text-center text-2xl text-primary-400">
                         Languages
                     </span>
-                    <span class="mb-2 text-primary-400">
+                    <span class="mb-2 text-center text-primary-400">
                         These only apply to the shader settings, the website is
                         currently only available in english.
                     </span>
