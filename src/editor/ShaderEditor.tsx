@@ -86,6 +86,10 @@ export default function ShaderEditor(props: Props) {
             setHiddenOptions(hiddenOptions);
             setIdentifier(identifier);
             setRanges(ranges);
+            for (const key in options) {
+                const opt = options[key];
+                console.log(key, opt.type === "text" ? opt.values : opt.value);
+            }
 
             Object.entries(hiddenOptions).forEach(([name, value]) => {
                 const option = options[name];

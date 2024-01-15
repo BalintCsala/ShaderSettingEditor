@@ -146,7 +146,7 @@ export default function SliderOption(props: Props) {
                         rangeData.max,
                         rangeData.step,
                         perc,
-                    ).toString(),
+                    ).toPrecision(8),
                 },
             }));
             return;

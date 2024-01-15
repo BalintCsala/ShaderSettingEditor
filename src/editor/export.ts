@@ -8,10 +8,7 @@ export function exportOptions(options: Options, filename: string) {
                     return `${name}=${option.value ? "true" : "false"}`;
                 }
                 case "text": {
-                    let value = option.value;
-                    if (!value.includes(".") && !value.endsWith(")")) {
-                        value += ".0";
-                    }
+                    const value = option.value;
                     return `${name}=${value}`;
                 }
             }
